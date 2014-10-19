@@ -11,7 +11,7 @@ namespace Cardinal_System_Node
                 portNumber = int.Parse(args[0]);
 
             var node = new CsNode(portNumber);
-            node.Start();
+            node.StartTest();
             Console.ReadKey();
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +26,7 @@ namespace Cardinal_System_Node
             {
                 using (var udpListener = new UdpClient(_port))
                 {
+                    udpListener.Client.ReceiveBufferSize = short.MaxValue;
                     while (true)
                     {
                         var udpResult = await udpListener.ReceiveAsync();
@@ -51,8 +51,9 @@ namespace Cardinal_System_Node
                 case EntityChangeType.PhysicalPosition:
                     wrapper.EntityChange = JsonConvert.DeserializeObject<PhysicalMovementEntityChange>(changeDto.EntityChange);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                case EntityChangeType.PhysicalCreate:
+                    wrapper.EntityChange = JsonConvert.DeserializeObject<PhysicalCreateEntityChange>(changeDto.EntityChange);
+                    break;
             }
             return wrapper;
         }

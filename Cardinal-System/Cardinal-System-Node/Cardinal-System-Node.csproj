@@ -44,10 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsNodeEntityReceiver.cs" />
+    <Compile Include="CsNodeEntityChangeCollector.cs" />
+    <Compile Include="CsNodeEntityChangeReceiver.cs" />
     <Compile Include="CsNode.cs" />
     <Compile Include="CsNodeListener.cs" />
-    <Compile Include="CsNodeSender.cs" />
+    <Compile Include="CsNodeEntityChangeSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
