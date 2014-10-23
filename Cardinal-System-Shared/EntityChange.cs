@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace Cardinal_System_Shared
 {
@@ -8,15 +8,6 @@ namespace Cardinal_System_Shared
         public int TargetId;
 
         public abstract EntityChangeType GetEntityChangeType();
-    }
-
-    public class PhysicalMovementEntityChange : EntityChange
-    {
-        public Tuple<int, int> PositionChange;
-        public override EntityChangeType GetEntityChangeType()
-        {
-            return EntityChangeType.PhysicalPosition;
-        }
     }
 
     public enum EntityChangeType
@@ -33,7 +24,7 @@ namespace Cardinal_System_Shared
 
     public class EntityChangeDtoArray
     {
-        public EntityChangeDto[] EntityChangeDtos { get; set; }
+        public IEnumerable<EntityChangeDto> EntityChangeDtos { get; set; }
     }
 
     public class EntityChangeWrapper

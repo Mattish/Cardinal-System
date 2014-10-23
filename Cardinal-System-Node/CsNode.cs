@@ -30,7 +30,7 @@ namespace Cardinal_System_Node
                 var entity = new PhysicalEntity();
                 for (int j = 0; j < 250; j++)
                 {
-                    list.Add(new PhysicalMovementEntityChange { PositionChange = new Tuple<int, int>(i, 1) });
+                    list.Add(new PhysicalMovementEntityChange { NewPosition = new Tuple<int, int>(i, 1) });
                 }
 
                 _entityChangeSender.SendMany(list, "127.0.0.1", _port);
@@ -53,7 +53,7 @@ namespace Cardinal_System_Node
             {
                 for (int i = 0; i < 1000; i++)
                 {
-                    list.Add(new PhysicalMovementEntityChange { PositionChange = new Tuple<int, int>(i, 1) });
+                    list.Add(new PhysicalMovementEntityChange { NewPosition = new Tuple<int, int>(i, 1) });
                 }
                 _entityChangeSender.SendMany(list, "127.0.0.1", _port);
                 list.Clear();

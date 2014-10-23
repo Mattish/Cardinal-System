@@ -11,6 +11,17 @@ namespace Cardinal_System_Shared
             get { return _xyPos; }
         }
 
+        public PhysicalEntity()
+        {
+            _xyPos = new Tuple<int, int>(0, 0);
+        }
+
+        public PhysicalEntity(int id, Tuple<int, int> initialTuple)
+        {
+            GlobalId = id;
+            _xyPos = initialTuple;
+        }
+
         public override void UpdateState(object updateWith, EntityChangeType changeType)
         {
             switch (changeType)
@@ -18,13 +29,9 @@ namespace Cardinal_System_Shared
                 case EntityChangeType.PhysicalPosition:
                     var physicalMovementEntityChange = updateWith as PhysicalMovementEntityChange;
                     if (physicalMovementEntityChange != null)
-                        _xyPos = new Tuple<int, int>(physicalMovementEntityChange.PositionChange.Item1 + _xyPos.Item1,
-                            physicalMovementEntityChange.PositionChange.Item2 + _xyPos.Item2);
+                        _xyPos = new Tuple<int, int>(physicalMovementEntityChange.NewPosition.Item1 + _xyPos.Item1,
+                            physicalMovementEntityChange.NewPosition.Item2 + _xyPos.Item2);
                     break;
-                case EntityChangeType.PhysicalCreate:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("changeType");
             }
         }
 

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Node", "Car
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Shared", "Cardinal-System-Shared\Cardinal-System-Shared.csproj", "{0DB3108A-959F-4460-A311-53DAC6D63211}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Circuit", "Cardinal-System-Circuit\Cardinal-System-Circuit.csproj", "{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
