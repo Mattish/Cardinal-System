@@ -21,7 +21,7 @@
             Changed = true;
         }
 
-        public abstract void UpdateState(object updateWith, EntityChangeType changeType);
+        public abstract void UpdateState(object updateWith, MessageType changeType);
         public abstract EntityType GetEntityType();
     }
 

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
-namespace Cardinal_System_Node
+namespace Cardinal_System_Circuit
 {
-    public class CsNodeListener
+    public class CsCircuitListener
     {
         private readonly int _port;
-        private readonly ConcurrentQueue<MessageWrapper> _received;
+        private readonly ConcurrentQueue<MessageDto> _received;
         private Task _listener;
 
-        public CsNodeListener(int port, ConcurrentQueue<MessageWrapper> received)
+        public CsCircuitListener(int port, ConcurrentQueue<MessageDto> received)
         {
             _port = port;
             _received = received;
@@ -35,27 +35,12 @@ namespace Cardinal_System_Node
                         var entityDtoArray = JsonConvert.DeserializeObject<MessageDtoArray>(json);
                         foreach (var entityDto in entityDtoArray.MessageDtos)
                         {
-                            _received.Enqueue(TranslateFromDto(entityDto));
+                            _received.Enqueue(entityDto);
                         }
                     }
                 }
             });
             _listener.Start();
-        }
-
-        private MessageWrapper TranslateFromDto(MessageDto changeDto)
-        {
-            var wrapper = new MessageWrapper { Type = changeDto.Type };
-            switch (changeDto.Type)
-            {
-                case MessageType.PhysicalEntityPosition:
-                    wrapper.Message = JsonConvert.DeserializeObject<PhysicalMovementMessage>(changeDto.Message);
-                    break;
-                case MessageType.PhysicalEntityCreate:
-                    wrapper.Message = JsonConvert.DeserializeObject<PhysicalCreateMessage>(changeDto.Message);
-                    break;
-            }
-            return wrapper;
         }
     }
 }

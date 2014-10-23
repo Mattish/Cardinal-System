@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using Cardinal_System_Shared;
 
@@ -9,59 +10,44 @@ namespace Cardinal_System_Node
     internal class CsNode
     {
         private readonly int _port;
-        private readonly CsNodeEntityChangeSender _entityChangeSender;
-        private readonly CsNodeEntityChangeReceiver _entityChangeReceiver;
+        private readonly CsNodeMessageSender _messageSender;
+        private readonly CsNodeMessageReceiver _messageReceiver;
         private readonly ConcurrentDictionary<int, Entity> entities;
 
         public CsNode(int port)
         {
             _port = port;
             entities = new ConcurrentDictionary<int, Entity>();
-            _entityChangeSender = new CsNodeEntityChangeSender();
-            _entityChangeReceiver = new CsNodeEntityChangeReceiver(port, entities);
+            _messageSender = new CsNodeMessageSender();
+            _messageReceiver = new CsNodeMessageReceiver(port, entities);
         }
 
-        public void StartTest()
+        public void StartTest(string ipAddress, int port)
         {
-            _entityChangeReceiver.Start();
-            var list = new List<EntityChange>(200);
+            _messageReceiver.Start();
+            var list = new List<Message>(200);
             for (int i = 0; i < 250; i++)
             {
                 var entity = new PhysicalEntity();
-                for (int j = 0; j < 250; j++)
+                for (int j = 0; j < 10; j++)
                 {
-                    list.Add(new PhysicalMovementEntityChange { NewPosition = new Tuple<int, int>(i, 1) });
+                    list.Add(new PhysicalMovementMessage
+                    {
+                        SourceId = 0,
+                        TargetId = 2,
+                        NewPosition = new Tuple<int, int>(i, 1)
+                    });
                 }
 
-                _entityChangeSender.SendMany(list, "127.0.0.1", _port);
+                _messageSender.SendMany(list, ipAddress, port);
                 list.Clear();
-                Thread.Sleep(20);
+                Thread.Sleep(10);
             }
         }
 
         public void Start()
         {
-            _entityChangeReceiver.Start();
-            var list = new List<EntityChange>(200);
-            for (int i = 0; i < 1000; i++)
-            {
-                var entity = new PhysicalEntity();
-                list.Add(new PhysicalCreateEntityChange(entity.GlobalId, entity.Position));
-            }
-            DateTime lastNow = DateTime.UtcNow;
-            while (true)
-            {
-                for (int i = 0; i < 1000; i++)
-                {
-                    list.Add(new PhysicalMovementEntityChange { NewPosition = new Tuple<int, int>(i, 1) });
-                }
-                _entityChangeSender.SendMany(list, "127.0.0.1", _port);
-                list.Clear();
-                TimeSpan timeToWait = DateTime.UtcNow - lastNow;
-                timeToWait = timeToWait > TimeSpan.FromMilliseconds(100) ? TimeSpan.Zero : TimeSpan.FromMilliseconds(100) - timeToWait;
-                Console.WriteLine("Waiting {0}ms", timeToWait.TotalMinutes);
-                lastNow = DateTime.UtcNow;
-            }
+            _messageReceiver.Start();
         }
     }
 }

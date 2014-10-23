@@ -22,12 +22,12 @@ namespace Cardinal_System_Shared
             _xyPos = initialTuple;
         }
 
-        public override void UpdateState(object updateWith, EntityChangeType changeType)
+        public override void UpdateState(object updateWith, MessageType changeType)
         {
             switch (changeType)
             {
-                case EntityChangeType.PhysicalPosition:
-                    var physicalMovementEntityChange = updateWith as PhysicalMovementEntityChange;
+                case MessageType.PhysicalEntityPosition:
+                    var physicalMovementEntityChange = updateWith as PhysicalMovementMessage;
                     if (physicalMovementEntityChange != null)
                         _xyPos = new Tuple<int, int>(physicalMovementEntityChange.NewPosition.Item1 + _xyPos.Item1,
                             physicalMovementEntityChange.NewPosition.Item2 + _xyPos.Item2);
@@ -48,7 +48,7 @@ namespace Cardinal_System_Shared
             return EntityType.BasicInformationEntity;
         }
 
-        public override void UpdateState(object updateWith, EntityChangeType changeType)
+        public override void UpdateState(object updateWith, MessageType changeType)
         {
             throw new NotImplementedException();
         }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cardinal_System_Circuit
 {
@@ -10,6 +6,9 @@ namespace Cardinal_System_Circuit
     {
         static void Main(string[] args)
         {
+            var circuit = new CsCircuit(25251);
+            circuit.StartTest();
+            Console.ReadKey();
         }
     }
 }

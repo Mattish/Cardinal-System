@@ -1,31 +1,31 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Node
 {
-    public class CsNodeEntityChangeSender
+    public class CsNodeMessageSender
     {
         private UdpClient _udpSender;
 
-        public void Send<T>(T objectToSend, string host, int port) where T : EntityChange
+        public void Send<T>(T objectToSend, string host, int port) where T : Message
         {
             if (_udpSender == null)
                 _udpSender = new UdpClient();
-            var array = new EntityChangeDtoArray
+            var array = new MessageDtoArray
             {
-                EntityChangeDtos = new[]
+                MessageDtos = new[]
                 {
-                    new EntityChangeDto
+                    new MessageDto
                     {
-                        EntityChange = JsonConvert.SerializeObject(objectToSend),
-                        Type = objectToSend.GetEntityChangeType()
+                        SourceId = objectToSend.SourceId,
+                        TargetId = objectToSend.TargetId,
+                        Message = JsonConvert.SerializeObject(objectToSend),
+                        Type = objectToSend.GetMessageType()
                     }
                 }
             };
@@ -34,27 +34,29 @@ namespace Cardinal_System_Node
             _udpSender.Send(buffer, buffer.Length, endPoint);
         }
 
-        public void SendMany<T>(List<T> objectsToSend, string host, int port) where T : EntityChange
+        public void SendMany<T>(List<T> objectsToSend, string host, int port) where T : Message
         {
             if (_udpSender == null)
                 _udpSender = new UdpClient();
-            var array = new EntityChangeDtoArray();
-            var listOfDtos = new List<EntityChangeDto>(16);
+            var array = new MessageDtoArray();
+            var listOfDtos = new List<MessageDto>(16);
             int startIndex = 0;
             int addIndex = 0;
             while (startIndex < objectsToSend.Count())
             {
                 while (startIndex + addIndex < objectsToSend.Count() && addIndex < 16)
                 {
-                    listOfDtos.Add(new EntityChangeDto
+                    listOfDtos.Add(new MessageDto
                     {
-                        EntityChange = JsonConvert.SerializeObject(objectsToSend[startIndex + addIndex]),
-                        Type = objectsToSend[startIndex + addIndex].GetEntityChangeType()
+                        SourceId = objectsToSend[startIndex + addIndex].SourceId,
+                        TargetId = objectsToSend[startIndex + addIndex].TargetId,
+                        Message = JsonConvert.SerializeObject(objectsToSend[startIndex + addIndex]),
+                        Type = objectsToSend[startIndex + addIndex].GetMessageType()
                     });
                     addIndex++;
                 }
 
-                array.EntityChangeDtos = listOfDtos;
+                array.MessageDtos = listOfDtos;
                 string json = JsonConvert.SerializeObject(array);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var endPoint = new IPEndPoint(IPAddress.Parse(host), port);

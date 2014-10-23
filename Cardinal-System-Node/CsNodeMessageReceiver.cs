@@ -6,10 +6,10 @@ using Cardinal_System_Shared;
 
 namespace Cardinal_System_Node
 {
-    internal class CsNodeEntityChangeReceiver
+    internal class CsNodeMessageReceiver
     {
         private readonly ConcurrentDictionary<int, Entity> _entities;
-        private readonly ConcurrentQueue<EntityChangeWrapper> _received;
+        private readonly ConcurrentQueue<MessageWrapper> _received;
         private readonly Task _processEntitiesTask;
         private readonly CsNodeListener _listener;
 
@@ -17,10 +17,10 @@ namespace Cardinal_System_Node
         private int _total;
         DateTime _lastNow = DateTime.Now;
 
-        public CsNodeEntityChangeReceiver(int port, ConcurrentDictionary<int, Entity> entities)
+        public CsNodeMessageReceiver(int port, ConcurrentDictionary<int, Entity> entities)
         {
             _entities = entities;
-            _received = new ConcurrentQueue<EntityChangeWrapper>();
+            _received = new ConcurrentQueue<MessageWrapper>();
             _processEntitiesTask = new Task(ProcessEntities);
             _processEntitiesTask.Start();
             _listener = new CsNodeListener(port, _received);
@@ -36,32 +36,34 @@ namespace Cardinal_System_Node
             while (true)
             {
                 Thread.Sleep(1);
-                while (!_received.IsEmpty)
+                while (!_received.IsEmpty && _value != 10)
                 {
-                    EntityChangeWrapper resultEntityChange;
-                    if (_received.TryDequeue(out resultEntityChange))
+                    MessageWrapper resultMessage;
+                    if (_received.TryDequeue(out resultMessage))
                     {
-                        ProcessEntity(resultEntityChange);
+                        ProcessEntity(resultMessage);
                     }
                     _value++;
                     _total++;
                 }
-                if (_value != 0)
+                if (_value == 10)
+                {
                     Console.WriteLine("Did {0} processes, total:{1}", _value, _total);
-                _value = 0;
+                    _value = 0;
+                }
             }
         }
 
-        private void ProcessEntity(EntityChangeWrapper resultEntityChange)
+        private void ProcessEntity(MessageWrapper resultMessage)
         {
-            switch (resultEntityChange.Type)
+            switch (resultMessage.Type)
             {
-                case EntityChangeType.PhysicalPosition:
-                    if (_entities.ContainsKey(resultEntityChange.EntityChange.SourceId))
-                        _entities[resultEntityChange.EntityChange.SourceId].UpdateState(resultEntityChange.EntityChange, resultEntityChange.Type);
+                case MessageType.PhysicalEntityPosition:
+                    if (_entities.ContainsKey(resultMessage.Message.SourceId))
+                        _entities[resultMessage.Message.SourceId].UpdateState(resultMessage.Message, resultMessage.Type);
                     break;
-                case EntityChangeType.PhysicalCreate:
-                    var entityChangeCreate = resultEntityChange.EntityChange as PhysicalCreateEntityChange;
+                case MessageType.PhysicalEntityCreate:
+                    var entityChangeCreate = resultMessage.Message as PhysicalCreateMessage;
                     var newEntity = new PhysicalEntity(entityChangeCreate.GlobalId, entityChangeCreate.InitialPosition);
                     _entities.TryAdd(newEntity.GlobalId, newEntity);
                     break;
