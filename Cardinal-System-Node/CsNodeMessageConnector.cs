@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Cardinal_System_Common;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
@@ -14,8 +15,8 @@ namespace Cardinal_System_Node
         private readonly IPAddress _circuitAddress;
         private readonly int _circuitPort;
         private readonly int _listeningPort;
-        private CsNodeMessageSender _messageSender;
-        private CsNodeMessageListener _messageListener;
+        private CsMessageSender _messageSender;
+        private CsMessageListener _messageListener;
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
         private readonly ConcurrentQueue<MessageDto> _receiverQueue;
@@ -35,8 +36,8 @@ namespace Cardinal_System_Node
             _client.Connect(_circuitAddress, _circuitPort);
             if (_client.Connected)
             {
-                _messageSender = new CsNodeMessageSender(_client, _senderQueue);
-                _messageListener = new CsNodeMessageListener(_client, _receiverQueue);
+                _messageSender = new CsMessageSender(_client, _senderQueue);
+                _messageListener = new CsMessageListener(_client, _receiverQueue);
                 _messageListener.Start();
                 _messageSender.Start();
 
@@ -58,7 +59,6 @@ namespace Cardinal_System_Node
                         NewPosition = new Tuple<int, int>(i, 1)
                     });
                 }
-                Thread.Sleep(1);
             }
             foreach (var message in list)
             {

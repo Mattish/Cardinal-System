@@ -1,28 +1,26 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
-namespace Cardinal_System_Node
+namespace Cardinal_System_Common
 {
-    public class CsNodeMessageSender
+    public class CsMessageSender
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
         private readonly Task _senderTask;
 
-        public CsNodeMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue)
+        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue)
         {
             _client = client;
             _senderQueue = senderQueue;
-            Console.WriteLine("Starting CsNodeMessageSender with inital queue of {0}", _senderQueue.Count);
+            Console.WriteLine("Starting CsMessageSender with inital queue of {0}", _senderQueue.Count);
             _senderTask = new Task(DoSending);
         }
 

@@ -1,23 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
-namespace Cardinal_System_Circuit
+namespace Cardinal_System_Common
 {
-    public class CsCircuitListener
+    public class CsMessageListener
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
         private Task _listener;
 
-        public CsCircuitListener(TcpClient client, ConcurrentQueue<MessageDto> received)
+        public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received)
         {
             _received = received;
             _client = client;
@@ -25,7 +23,6 @@ namespace Cardinal_System_Circuit
 
         public void Start()
         {
-            int totalReceived = 0;
             _listener = new Task(() =>
             {
                 using (_client)
@@ -46,7 +43,6 @@ namespace Cardinal_System_Circuit
                         while (_client.Connected)
                         {
                             var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
-                            totalReceived += dtoArray.MessageDtos.Count;
                             foreach (var entityDto in dtoArray.MessageDtos)
                             {
                                 _received.Enqueue(entityDto);
