@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 
 namespace Cardinal_System_Node
 {
@@ -11,11 +12,8 @@ namespace Cardinal_System_Node
             if (args.Length > 0)
                 portNumber = int.Parse(args[0]);
             Console.WriteLine("Listening on port {0}", portNumber);
-            var node = new CsNode(portNumber);
-            if (portNumber == 25250)
-                node.StartTest("127.0.0.1", 25251);
-            else
-                node.Start();
+            var node = new CsNode(IPAddress.Loopback, 25251, portNumber);
+            node.Start();
             Console.ReadKey();
         }
     }

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,32 +13,46 @@ namespace Cardinal_System_Circuit
 {
     public class CsCircuitListener
     {
-        private readonly int _port;
+        private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
         private Task _listener;
 
-        public CsCircuitListener(int port, ConcurrentQueue<MessageDto> received)
+        public CsCircuitListener(TcpClient client, ConcurrentQueue<MessageDto> received)
         {
-            _port = port;
             _received = received;
+            _client = client;
         }
 
         public void Start()
         {
-            _listener = new Task(async () =>
+            int totalReceived = 0;
+            _listener = new Task(() =>
             {
-                using (var udpListener = new UdpClient(_port))
+                using (_client)
                 {
-                    udpListener.Client.ReceiveBufferSize = short.MaxValue;
-                    while (true)
+                    _client.Client.ReceiveBufferSize = short.MaxValue;
+                    var stream = _client.GetStream();
+                    var serializer = new JsonSerializer
                     {
-                        var udpResult = await udpListener.ReceiveAsync();
-                        byte[] bytesArray = udpResult.Buffer;
-                        string json = Encoding.UTF8.GetString(bytesArray);
-                        var entityDtoArray = JsonConvert.DeserializeObject<MessageDtoArray>(json);
-                        foreach (var entityDto in entityDtoArray.MessageDtos)
+                        CheckAdditionalContent = false
+                    };
+
+                    using (var sr = new StreamReader(stream, Encoding.UTF8, false))
+                    using (var jsr = new JsonTextReader(sr)
+                    {
+                        SupportMultipleContent = true
+                    })
+                    {
+                        while (_client.Connected)
                         {
-                            _received.Enqueue(entityDto);
+                            var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
+                            totalReceived += dtoArray.MessageDtos.Count;
+                            foreach (var entityDto in dtoArray.MessageDtos)
+                            {
+                                _received.Enqueue(entityDto);
+                            }
+                            Console.WriteLine("receivedTotal:{0}", _received.Count);
+                            jsr.Read();
                         }
                     }
                 }

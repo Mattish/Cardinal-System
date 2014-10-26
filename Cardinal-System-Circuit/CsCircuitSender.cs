@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
@@ -13,15 +14,13 @@ namespace Cardinal_System_Circuit
 {
     public class CsCircuitSender
     {
+        private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
-        private readonly Dictionary<int, IPEndPoint> _componentAddresses;
-        private readonly Dictionary<int, List<int>> _componentsInterestInEntity;
         private readonly Task _senderTask;
 
-        public CsCircuitSender(ConcurrentQueue<MessageDto> received)
+        public CsCircuitSender(TcpClient client, ConcurrentQueue<MessageDto> received)
         {
-            _componentAddresses = new Dictionary<int, IPEndPoint>();
-            _componentsInterestInEntity = new Dictionary<int, List<int>>();
+            _client = client;
             _received = received;
             _senderTask = new Task(DoSending);
         }
@@ -33,47 +32,32 @@ namespace Cardinal_System_Circuit
 
         private void DoSending()
         {
-            var udpSender = new UdpClient();
-            int i = 0;
-            while (true)
+            var stream = _client.GetStream();
+            using (var textWriter = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8)))
             {
-                while (!_received.IsEmpty)
+                while (_client.Connected)
                 {
-                    MessageDto messageDto;
-                    bool couldDequeue = _received.TryDequeue(out messageDto);
-                    //Batch this shit better
-                    if (couldDequeue)
+                    int batchedCount = 0;
+                    var messageDtoArray = new MessageDtoArray();
+                    while (!_received.IsEmpty && batchedCount < 17)
                     {
-                        int targetEntity = messageDto.TargetId;
-                        if (_componentsInterestInEntity.ContainsKey(targetEntity) && _componentsInterestInEntity[targetEntity].Count > 0)
+                        MessageDto messageDto;
+                        bool couldDequeue = _received.TryDequeue(out messageDto);
+                        if (couldDequeue)
                         {
-                            foreach (var componentInterestInEntity in _componentsInterestInEntity[targetEntity])
-                            {
-                                var messageArrayDto = new MessageDtoArray();
-                                messageArrayDto.MessageDtos = new[] { messageDto };
-                                string json = JsonConvert.SerializeObject(messageArrayDto);
-                                byte[] buffer = Encoding.UTF8.GetBytes(json);
-                                var endPoint = _componentAddresses[componentInterestInEntity];
-                                udpSender.Send(buffer, buffer.Length, endPoint);
-                                Console.WriteLine("#{2} Sending Dto targetId:{0} to component:{1} of type:{3}", messageDto.TargetId, componentInterestInEntity, i++, messageDto.Type);
-                            }
+                            messageDtoArray.MessageDtos.Add(messageDto);
+                            batchedCount++;
                         }
                     }
-                    Thread.Sleep(1);
+                    if (batchedCount > 0)
+                    {
+                        string json = JsonConvert.SerializeObject(messageDtoArray);
+                        textWriter.WriteRaw(json);
+                        Console.WriteLine("Sending DtoArray length:{0}", messageDtoArray.MessageDtos.Count());
+                    }
                 }
             }
         }
 
-        public void RegisterComponentAddress(int componentId, IPEndPoint endpoint)
-        {
-            _componentAddresses.Add(componentId, endpoint);
-        }
-
-        public void RegisterComponentInterestInEntity(int componentId, int entityId)
-        {
-            if (!_componentsInterestInEntity.ContainsKey(componentId))
-                _componentsInterestInEntity.Add(entityId, new List<int>());
-            _componentsInterestInEntity[entityId].Add(componentId);
-        }
     }
 }

@@ -1,53 +1,27 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Net;
-using System.Threading;
 using Cardinal_System_Shared;
 
 namespace Cardinal_System_Node
 {
     internal class CsNode
     {
-        private readonly int _port;
-        private readonly CsNodeMessageSender _messageSender;
-        private readonly CsNodeMessageReceiver _messageReceiver;
-        private readonly ConcurrentDictionary<int, Entity> entities;
+        private readonly int _circuitPort;
+        private readonly int _listeningPort;
+        private readonly CsNodeMessageConnector _messageConnector;
+        private readonly ConcurrentDictionary<int, Entity> _entities;
 
-        public CsNode(int port)
+        public CsNode(IPAddress circuitAddress, int circuitPort, int listeningPort)
         {
-            _port = port;
-            entities = new ConcurrentDictionary<int, Entity>();
-            _messageSender = new CsNodeMessageSender();
-            _messageReceiver = new CsNodeMessageReceiver(port, entities);
-        }
-
-        public void StartTest(string ipAddress, int port)
-        {
-            _messageReceiver.Start();
-            var list = new List<Message>(200);
-            for (int i = 0; i < 250; i++)
-            {
-                var entity = new PhysicalEntity();
-                for (int j = 0; j < 10; j++)
-                {
-                    list.Add(new PhysicalMovementMessage
-                    {
-                        SourceId = 0,
-                        TargetId = 2,
-                        NewPosition = new Tuple<int, int>(i, 1)
-                    });
-                }
-
-                _messageSender.SendMany(list, ipAddress, port);
-                list.Clear();
-                Thread.Sleep(10);
-            }
+            _circuitPort = circuitPort;
+            _listeningPort = listeningPort;
+            _entities = new ConcurrentDictionary<int, Entity>();
+            _messageConnector = new CsNodeMessageConnector(listeningPort, IPAddress.Parse("127.0.0.1"), circuitPort, _entities);
         }
 
         public void Start()
         {
-            _messageReceiver.Start();
+            _messageConnector.StartTest();
         }
     }
 }

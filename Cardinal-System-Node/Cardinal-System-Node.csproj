@@ -45,9 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsNodeMessageCollector.cs" />
-    <Compile Include="CsNodeMessageReceiver.cs" />
+    <Compile Include="CsNodeMessageConnector.cs" />
+    <Compile Include="CsNodeMessageListener.cs" />
     <Compile Include="CsNode.cs" />
-    <Compile Include="CsNodeListener.cs" />
+    <Compile Include="CsNodeListenerOld.cs" />
     <Compile Include="CsNodeMessageSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

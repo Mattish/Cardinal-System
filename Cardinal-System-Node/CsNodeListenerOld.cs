@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Node
 {
-    public class CsNodeListener
+    public class CsNodeListenerOld
     {
         private readonly int _port;
         private readonly ConcurrentQueue<MessageWrapper> _received;
         private Task _listener;
 
-        public CsNodeListener(int port, ConcurrentQueue<MessageWrapper> received)
+        public CsNodeListenerOld(int port, ConcurrentQueue<MessageWrapper> received)
         {
             _port = port;
             _received = received;

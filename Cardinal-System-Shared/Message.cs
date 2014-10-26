@@ -4,8 +4,8 @@ namespace Cardinal_System_Shared
 {
     public abstract class Message
     {
-        public int SourceId;
-        public int TargetId;
+        public long SourceId;
+        public long TargetId;
 
         public abstract MessageType GetMessageType();
     }
@@ -21,14 +21,14 @@ namespace Cardinal_System_Shared
     public class MessageDto
     {
         public MessageType Type { get; set; }
-        public int SourceId { get; set; }
-        public int TargetId { get; set; }
+        public long SourceId { get; set; }
+        public long TargetId { get; set; }
         public string Message { get; set; }
     }
 
     public class MessageDtoArray
     {
-        public IEnumerable<MessageDto> MessageDtos { get; set; }
+        public List<MessageDto> MessageDtos { get; set; }
     }
 
     public class MessageWrapper

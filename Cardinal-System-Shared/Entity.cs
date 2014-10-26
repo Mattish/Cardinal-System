@@ -2,12 +2,12 @@
 {
     public abstract class Entity
     {
-        private readonly int _globalId;
+        private readonly long _globalId;
 
         public string EntityData = "EntityData";
 
 
-        public int GlobalId { get; protected set; }
+        public long GlobalId { get; protected set; }
         public bool Changed { get; private set; }
 
         protected Entity(bool createdAsReceive = false)

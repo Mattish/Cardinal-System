@@ -16,7 +16,7 @@ namespace Cardinal_System_Shared
             _xyPos = new Tuple<int, int>(0, 0);
         }
 
-        public PhysicalEntity(int id, Tuple<int, int> initialTuple)
+        public PhysicalEntity(long id, Tuple<int, int> initialTuple)
         {
             GlobalId = id;
             _xyPos = initialTuple;

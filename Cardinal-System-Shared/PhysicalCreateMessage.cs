@@ -4,9 +4,9 @@ namespace Cardinal_System_Shared
 {
     public class PhysicalCreateMessage : Message
     {
-        public int GlobalId;
+        public long GlobalId;
         public Tuple<int, int> InitialPosition;
-        public PhysicalCreateMessage(int id, Tuple<int, int> initialPosition)
+        public PhysicalCreateMessage(long id, Tuple<int, int> initialPosition)
         {
             GlobalId = id;
             InitialPosition = initialPosition;

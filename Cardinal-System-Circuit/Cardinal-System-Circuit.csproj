@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsCircuit.cs" />
+    <Compile Include="CsCircuitComponentConnection.cs" />
+    <Compile Include="CsCircuitConnector.cs" />
     <Compile Include="CsCircuitListener.cs" />
     <Compile Include="CsCircuitSender.cs" />
     <Compile Include="Program.cs" />
