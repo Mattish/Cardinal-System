@@ -20,6 +20,12 @@ Things that need to be considered:
 * NerveGear(?) - Outside connection/server and security for that
 * Ruru(?) - Redundency of somekind, thinking of placing in, or connected to history into circuits so can easily plug-in & dump to new Node
 
-## Cardinal-System-Shared
+![Potential architecture](http://puu.sh/crNIy/f697b3ae25.png)
 
-This contains all the transferable common objects. Internal domain objects can be physical or information. DTOs currently are labeled as a 'Change', might just change to/append 'DTO' for simplicity.
+### Cardinal-System-Shared
+
+This contains all the transferable common objects. Internal domain objects can be physical or information. Message base type for every message. 
+
+### Cardinal-System-Common
+
+Starting to put common components into here. For the moment only some networking.
