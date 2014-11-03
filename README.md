@@ -29,3 +29,10 @@ This contains all the transferable common objects. Internal domain objects can b
 ### Cardinal-System-Common
 
 Starting to put common components into here. For the moment only some networking.
+
+### To Do / To think about
+
+* Which components try to initiate network connections?
+* How does component splitting work? Send request over connectors? Ask HeathCliff?
+* Should there be 'idle' components waiting for allocation?
+* Should connectors queue messages up at all?
