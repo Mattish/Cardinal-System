@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,12 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeableState.cs" />
+    <Compile Include="ComponentMessage.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="PhysicalCreateMessage.cs" />
     <Compile Include="PhysicalEntity.cs" />
     <Compile Include="PhysicalMovementMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

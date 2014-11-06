@@ -7,14 +7,10 @@ namespace Cardinal_System_Shared
         public long GlobalId;
         public Tuple<int, int> InitialPosition;
         public PhysicalCreateMessage(long id, Tuple<int, int> initialPosition)
+            : base(MessageType.PhysicalEntityCreate)
         {
             GlobalId = id;
             InitialPosition = initialPosition;
-        }
-
-        public override MessageType GetMessageType()
-        {
-            return MessageType.PhysicalEntityCreate;
         }
     }
 }

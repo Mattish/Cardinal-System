@@ -13,23 +13,22 @@ namespace Cardinal_System_Circuit
         private readonly IPAddress _ipAddress;
         private readonly int _port;
         private readonly TcpListener _tcpListener;
-        private readonly ConcurrentDictionary<int, CsCircuitComponentConnection> _componentConnections;
+        private readonly ConcurrentDictionary<long, CsCircuitComponentConnection> _componentConnections;
         private readonly List<CsCircuitComponentConnection> _unnumberedComponentConnections;
         private readonly ConcurrentQueue<MessageDto> _receivingQueue;
         private readonly Task _listenerTask;
         private readonly Task _distributingTask;
 
-        private readonly Dictionary<int, IPEndPoint> _componentAddresses;
-        private readonly Dictionary<long, List<int>> _componentsInterestInEntity;
+        private readonly Dictionary<long, IPEndPoint> _componentAddresses;
+        private readonly Dictionary<long, List<long>> _componentsInterestInEntity;
 
         public CsCircuitConnector(IPAddress ipAddress, int port)
         {
-
-            _componentAddresses = new Dictionary<int, IPEndPoint>();
-            _componentsInterestInEntity = new Dictionary<long, List<int>>();
+            _componentAddresses = new Dictionary<long, IPEndPoint>();
+            _componentsInterestInEntity = new Dictionary<long, List<long>>();
 
             _receivingQueue = new ConcurrentQueue<MessageDto>();
-            _componentConnections = new ConcurrentDictionary<int, CsCircuitComponentConnection>();
+            _componentConnections = new ConcurrentDictionary<long, CsCircuitComponentConnection>();
             _ipAddress = ipAddress;
             _port = port;
             _unnumberedComponentConnections = new List<CsCircuitComponentConnection>();
@@ -41,27 +40,42 @@ namespace Cardinal_System_Circuit
 
         private void DoDistributing()
         {
-            while (!_receivingQueue.IsEmpty)
+            while (true)
             {
-                MessageDto messageDto;
-                if (_receivingQueue.TryDequeue(out messageDto))
+                while (!_receivingQueue.IsEmpty)
                 {
-                    // Until I create a way of adding component IDs after connecting this is useless
-
-                    //int targetEntity = messageDto.TargetId;
-                    //if (_componentsInterestInEntity.ContainsKey(targetEntity) && _componentsInterestInEntity[targetEntity].Count > 0)
-                    //{
-                    //    foreach (var componentInterestInEntity in _componentsInterestInEntity[targetEntity])
-                    //    {
-                    //        if (_componentAddresses.ContainsKey(componentInterestInEntity)
-                    //            _componentConnections[componentInterestInEntity].GetSenderQueue.Enqueue(messageDto);
-                    //    }
-                    //}
-
-                    // So for now send it to everything
-                    foreach (var csCircuitComponentConnection in _componentConnections)
+                    MessageDto messageDto;
+                    if (_receivingQueue.TryDequeue(out messageDto))
                     {
-                        csCircuitComponentConnection.Value.GetSenderQueue.Enqueue(messageDto);
+                        switch (messageDto.Family)
+                        {
+                            case MessageFamily.PhysicalEntity:
+                                // So for now send it to everything
+                                foreach (var csCircuitComponentConnection in _componentConnections)
+                                {
+                                    csCircuitComponentConnection.Value.GetSenderQueue.Enqueue(messageDto);
+                                }
+                                break;
+                            case MessageFamily.Component:
+                                switch (messageDto.Type)
+                                {
+                                    case MessageType.RegisterEntityInterest:
+                                        var componentMessage =
+                                            messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
+                                        Console.WriteLine(
+                                            "Received message from componentId:{0} registering interest for targetId:{1}",
+                                            componentMessage.SourceId, componentMessage.TargetId);
+                                        if (componentMessage != null)
+                                            RegisterComponentInterestInEntity(componentMessage.SourceId,
+                                                componentMessage.TargetId);
+                                        break;
+                                }
+                                break;
+                            case MessageFamily.Unknown:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
                 }
             }
@@ -86,15 +100,15 @@ namespace Cardinal_System_Circuit
             }
         }
 
-        public void RegisterComponentAddress(int componentId, IPEndPoint endpoint)
+        public void RegisterComponentAddress(long componentId, IPEndPoint endpoint)
         {
             _componentAddresses.Add(componentId, endpoint);
         }
 
-        public void RegisterComponentInterestInEntity(int componentId, int entityId)
+        public void RegisterComponentInterestInEntity(long componentId, long entityId)
         {
             if (!_componentsInterestInEntity.ContainsKey(componentId))
-                _componentsInterestInEntity.Add(entityId, new List<int>());
+                _componentsInterestInEntity.Add(entityId, new List<long>());
             _componentsInterestInEntity[entityId].Add(componentId);
         }
 

@@ -34,8 +34,9 @@ namespace Cardinal_System_Common
             var stream = _client.GetStream();
             int sendTotal = 0;
             int dequeueAmount = 0;
-            using (var textWriter = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8)))
+            try
             {
+                var textWriter = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 8096, true));
                 textWriter.Formatting = Formatting.None;
                 while (_client.Connected)
                 {
@@ -65,10 +66,15 @@ namespace Cardinal_System_Common
                         json += "\r\n";
                         textWriter.WriteRaw(json);
                         textWriter.Flush();
-                        Console.WriteLine("Sent DtoArray total:{0} dequeueAmount:{1} actualCountOfQueue:{2}", sendTotal, dequeueAmount, _senderQueue.Count);
+                        Console.WriteLine("Sent DtoArray total:{0} dequeueAmount:{1} actualCountOfQueue:{2}",
+                            sendTotal, dequeueAmount, _senderQueue.Count);
                     }
                 }
-                Console.WriteLine("disconnected");
+                Console.WriteLine("sender disconnected");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Client sender error :( {0}", e.Message);
             }
         }
     }

@@ -33,13 +33,14 @@ namespace Cardinal_System_Common
                     {
                         CheckAdditionalContent = false
                     };
+                    try
+                    {
+                        var sr = new StreamReader(stream, Encoding.UTF8, false, 8096, true);
+                        var jsr = new JsonTextReader(sr)
+                        {
+                            SupportMultipleContent = true
+                        };
 
-                    using (var sr = new StreamReader(stream, Encoding.UTF8, false))
-                    using (var jsr = new JsonTextReader(sr)
-                    {
-                        SupportMultipleContent = true
-                    })
-                    {
                         while (_client.Connected)
                         {
                             var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
@@ -48,10 +49,21 @@ namespace Cardinal_System_Common
                                 _received.Enqueue(entityDto);
                             }
                             Console.WriteLine("receivedTotal:{0}", _received.Count);
-                            jsr.Read();
+                            if (!sr.EndOfStream)
+                                jsr.Read();
                         }
+                        Console.WriteLine("disconnect listener");
+                    }
+                    catch (IOException e)
+                    {
+                        Console.WriteLine("Client listener error, probably disconnect {0}", e.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Client listener error :( {0}", e.Message);
                     }
                 }
+
             });
             _listener.Start();
         }

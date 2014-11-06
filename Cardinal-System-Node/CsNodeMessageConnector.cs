@@ -44,7 +44,18 @@ namespace Cardinal_System_Node
             }
         }
 
-        public void StartTest()
+        public void StartTest2()
+        {
+            Start();
+            _senderQueue.Enqueue(new RegisterEntityInterestMessage
+            {
+                SourceId = 10,
+                TargetId = 69,
+                Type = MessageType.RegisterEntityInterest
+            }.ToDto());
+        }
+
+        public void StartTest1()
         {
             var list = new List<Message>(2500);
             for (int i = 0; i < 250; i++)
@@ -60,11 +71,13 @@ namespace Cardinal_System_Node
                     });
                 }
             }
+
             foreach (var message in list)
             {
                 var messageDto = new MessageDto
                 {
-                    Type = message.GetMessageType(),
+                    Family = message.Type.GetMessageFamily(),
+                    Type = message.Type,
                     SourceId = 1,
                     TargetId = 2,
                     Message = JsonConvert.SerializeObject(message)
@@ -93,7 +106,8 @@ namespace Cardinal_System_Node
             {
                 var messageDto = new MessageDto
                 {
-                    Type = message.GetMessageType(),
+                    Family = message.Type.GetMessageFamily(),
+                    Type = message.Type,
                     SourceId = 1,
                     TargetId = 2,
                     Message = JsonConvert.SerializeObject(message)

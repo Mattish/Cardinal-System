@@ -21,7 +21,7 @@ namespace Cardinal_System_Node
 
         public void Start()
         {
-            _messageConnector.StartTest();
+            _messageConnector.StartTest2();
         }
     }
 }

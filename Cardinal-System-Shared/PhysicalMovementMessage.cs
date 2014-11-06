@@ -5,9 +5,10 @@ namespace Cardinal_System_Shared
     public class PhysicalMovementMessage : Message
     {
         public Tuple<int, int> NewPosition;
-        public override MessageType GetMessageType()
+
+        public PhysicalMovementMessage()
+            : base(MessageType.PhysicalEntityPosition)
         {
-            return MessageType.PhysicalEntityPosition;
         }
     }
 }
