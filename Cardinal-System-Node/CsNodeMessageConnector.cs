@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using Cardinal_System_Common;
 using Cardinal_System_Shared;
 using Newtonsoft.Json;
@@ -42,6 +43,11 @@ namespace Cardinal_System_Node
                 _messageSender.Start();
 
             }
+        }
+
+        public void SendRegister()
+        {
+            _senderQueue.Enqueue(new RegisterWithCircuitMessage().ToDto());
         }
 
         public void StartTest2()
@@ -115,6 +121,17 @@ namespace Cardinal_System_Node
                 _senderQueue.Enqueue(messageDto);
             }
             Console.WriteLine("Enqueue {0} messages", _senderQueue.Count);
+        }
+
+        public void Stop()
+        {
+            _client.Close();
+            while (_messageSender.IsRunning() && _messageListener.IsRunning())
+            {
+                Console.WriteLine("Waiting for sender and listener to finish up");
+                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            }
+            Console.WriteLine("sender and listener finished up");
         }
     }
 }

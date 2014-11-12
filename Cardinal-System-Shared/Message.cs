@@ -89,11 +89,15 @@ namespace Cardinal_System_Shared
                 case MessageType.RegisterEntityInterest:
                     return JsonConvert.DeserializeObject<RegisterEntityInterestMessage>(Message);
                 case MessageType.RegisterWithCircuit:
+                    return JsonConvert.DeserializeObject<RegisterWithCircuitMessage>(Message);
                 case MessageType.UnregisterWithCircuit:
+                    return JsonConvert.DeserializeObject<UnregisterWithCircuitMessage>(Message);
                 case MessageType.UnregisterEntityInterest:
+                    return JsonConvert.DeserializeObject<UnregisterEntityInterestMessage>(Message);
                 case MessageType.RegisterEntityOwner:
+                    return JsonConvert.DeserializeObject<RegisterEntityOwnerMessage>(Message);
                 case MessageType.UnregisterEntityOwner:
-                    return JsonConvert.DeserializeObject<ComponentMessage>(Message);
+                    return JsonConvert.DeserializeObject<UnregisterEntityOwnerMessage>(Message);
                 default:
                     return null;
             }

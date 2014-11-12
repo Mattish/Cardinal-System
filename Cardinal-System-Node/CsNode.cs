@@ -21,7 +21,17 @@ namespace Cardinal_System_Node
 
         public void Start()
         {
-            _messageConnector.StartTest2();
+            _messageConnector.Start();
+        }
+
+        public void SendRegister()
+        {
+            _messageConnector.SendRegister();
+        }
+
+        public void Stop()
+        {
+            _messageConnector.Stop();
         }
     }
 }

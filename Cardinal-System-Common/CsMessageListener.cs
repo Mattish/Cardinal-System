@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
 {
-    public class CsMessageListener
+    public class CsMessageListener : IAsyncRunnable
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
@@ -25,47 +25,49 @@ namespace Cardinal_System_Common
         {
             _listener = new Task(() =>
             {
-                using (_client)
+                _client.Client.ReceiveBufferSize = short.MaxValue;
+                var stream = _client.GetStream();
+                var serializer = new JsonSerializer
                 {
-                    _client.Client.ReceiveBufferSize = short.MaxValue;
-                    var stream = _client.GetStream();
-                    var serializer = new JsonSerializer
+                    CheckAdditionalContent = false
+                };
+                try
+                {
+                    var sr = new StreamReader(stream, Encoding.UTF8, false, 8096, true);
+                    var jsr = new JsonTextReader(sr)
                     {
-                        CheckAdditionalContent = false
+                        SupportMultipleContent = true
                     };
-                    try
-                    {
-                        var sr = new StreamReader(stream, Encoding.UTF8, false, 8096, true);
-                        var jsr = new JsonTextReader(sr)
-                        {
-                            SupportMultipleContent = true
-                        };
 
-                        while (_client.Connected)
+                    while (_client.Connected)
+                    {
+                        var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
+                        foreach (var entityDto in dtoArray.MessageDtos)
                         {
-                            var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
-                            foreach (var entityDto in dtoArray.MessageDtos)
-                            {
-                                _received.Enqueue(entityDto);
-                            }
-                            Console.WriteLine("receivedTotal:{0}", _received.Count);
-                            if (!sr.EndOfStream)
-                                jsr.Read();
+                            _received.Enqueue(entityDto);
                         }
-                        Console.WriteLine("disconnect listener");
+                        Console.WriteLine("receivedTotal:{0}", _received.Count);
+                        if (!sr.EndOfStream)
+                            jsr.Read();
                     }
-                    catch (IOException e)
-                    {
-                        Console.WriteLine("Client listener error, probably disconnect {0}", e.Message);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Client listener error :( {0}", e.Message);
-                    }
+                    Console.WriteLine("disconnect listener");
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine("Client listener error, probably disconnect {0}", e.Message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Client listener error :( {0}", e.Message);
                 }
 
             });
             _listener.Start();
+        }
+
+        public bool IsRunning()
+        {
+            return _listener.Status == TaskStatus.Running;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Cardinal_System_Circuit
 
         private readonly Dictionary<long, IPEndPoint> _componentAddresses;
         private readonly Dictionary<long, List<long>> _componentsInterestInEntity;
+        private bool doProcessing;
 
         public CsCircuitConnector(IPAddress ipAddress, int port)
         {
@@ -34,19 +35,21 @@ namespace Cardinal_System_Circuit
             _unnumberedComponentConnections = new List<CsCircuitComponentConnection>();
             _tcpListener = new TcpListener(ipAddress, port);
             _listenerTask = new Task(DoListening);
-            _distributingTask = new Task(DoDistributing);
+            _distributingTask = new Task(ProcessMessagingLoop);
         }
 
 
-        private void DoDistributing()
+        private void ProcessMessagingLoop()
         {
-            while (true)
+            while (doProcessing)
             {
                 while (!_receivingQueue.IsEmpty)
                 {
                     MessageDto messageDto;
                     if (_receivingQueue.TryDequeue(out messageDto))
                     {
+                        Console.WriteLine("Received message Family:{0} Type:{1} SourceId:{2} TargetId:{3}",
+                            messageDto.Family, messageDto.Type, messageDto.SourceId, messageDto.TargetId);
                         switch (messageDto.Family)
                         {
                             case MessageFamily.PhysicalEntity:
@@ -60,14 +63,8 @@ namespace Cardinal_System_Circuit
                                 switch (messageDto.Type)
                                 {
                                     case MessageType.RegisterEntityInterest:
-                                        var componentMessage =
-                                            messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
-                                        Console.WriteLine(
-                                            "Received message from componentId:{0} registering interest for targetId:{1}",
-                                            componentMessage.SourceId, componentMessage.TargetId);
-                                        if (componentMessage != null)
-                                            RegisterComponentInterestInEntity(componentMessage.SourceId,
-                                                componentMessage.TargetId);
+                                        var componentMessage = messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
+                                        RegisterComponentInterestInEntity(componentMessage.SourceId, componentMessage.TargetId);
                                         break;
                                 }
                                 break;
@@ -83,14 +80,20 @@ namespace Cardinal_System_Circuit
 
         public void Start()
         {
+            doProcessing = true;
             _listenerTask.Start();
             _distributingTask.Start();
+        }
+
+        public void Stop()
+        {
+            doProcessing = false;
         }
 
         private void DoListening()
         {
             _tcpListener.Start();
-            while (true)
+            while (doProcessing)
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");

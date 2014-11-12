@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
 {
-    public class CsMessageSender
+    public class CsMessageSender : IAsyncRunnable
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
@@ -77,5 +77,15 @@ namespace Cardinal_System_Common
                 Console.WriteLine("Client sender error :( {0}", e.Message);
             }
         }
+
+        public bool IsRunning()
+        {
+            return _senderTask.Status == TaskStatus.Running;
+        }
+    }
+
+    public interface IAsyncRunnable
+    {
+        bool IsRunning();
     }
 }
