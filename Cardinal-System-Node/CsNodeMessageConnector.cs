@@ -45,11 +45,6 @@ namespace Cardinal_System_Node
             }
         }
 
-        public void SendRegister()
-        {
-            _senderQueue.Enqueue(new RegisterWithCircuitMessage().ToDto());
-        }
-
         public void StartTest2()
         {
             Start();
@@ -132,6 +127,23 @@ namespace Cardinal_System_Node
                 Thread.Sleep(TimeSpan.FromMilliseconds(100));
             }
             Console.WriteLine("sender and listener finished up");
+        }
+
+        public void SendInfo(long number)
+        {
+            _senderQueue.Enqueue(new RegisterWithCircuitMessage
+            {
+                SourceId = number
+            }.ToDto());
+        }
+
+        public void SendRegister(long entityNumber)
+        {
+            _senderQueue.Enqueue(new RegisterEntityInterestMessage
+            {
+                SourceId = CsNode.Identity,
+                TargetId = entityNumber
+            }.ToDto());
         }
     }
 }

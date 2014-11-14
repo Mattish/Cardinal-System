@@ -66,8 +66,6 @@ namespace Cardinal_System_Common
                         json += "\r\n";
                         textWriter.WriteRaw(json);
                         textWriter.Flush();
-                        Console.WriteLine("Sent DtoArray total:{0} dequeueAmount:{1} actualCountOfQueue:{2}",
-                            sendTotal, dequeueAmount, _senderQueue.Count);
                     }
                 }
                 Console.WriteLine("sender disconnected");

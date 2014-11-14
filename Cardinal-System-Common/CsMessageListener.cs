@@ -46,7 +46,6 @@ namespace Cardinal_System_Common
                         {
                             _received.Enqueue(entityDto);
                         }
-                        Console.WriteLine("receivedTotal:{0}", _received.Count);
                         if (!sr.EndOfStream)
                             jsr.Read();
                     }

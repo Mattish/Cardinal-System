@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
+using System.Net.Sockets;
 using Cardinal_System_Shared;
 
 namespace Cardinal_System_Node
@@ -11,8 +12,9 @@ namespace Cardinal_System_Node
         private readonly CsNodeMessageConnector _messageConnector;
         private readonly ConcurrentDictionary<int, Entity> _entities;
 
-        public CsNode(IPAddress circuitAddress, int circuitPort, int listeningPort)
+        public CsNode(long identity, IPAddress circuitAddress, int circuitPort, int listeningPort)
         {
+            Identity = identity;
             _circuitPort = circuitPort;
             _listeningPort = listeningPort;
             _entities = new ConcurrentDictionary<int, Entity>();
@@ -22,16 +24,19 @@ namespace Cardinal_System_Node
         public void Start()
         {
             _messageConnector.Start();
+            _messageConnector.SendInfo(Identity);
         }
 
-        public void SendRegister()
+        public void SendRegister(long entityNumber)
         {
-            _messageConnector.SendRegister();
+            _messageConnector.SendRegister(entityNumber);
         }
 
         public void Stop()
         {
             _messageConnector.Stop();
         }
+
+        public static long Identity { get; private set; }
     }
 }

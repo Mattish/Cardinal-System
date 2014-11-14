@@ -10,14 +10,21 @@ namespace Cardinal_System_Circuit
         private readonly CsMessageListener _circuitListener;
         private readonly CsMessageSender _circuitSender;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
-        public CsCircuitComponentConnection(TcpClient client, ConcurrentQueue<MessageDto> receivingQueue)
+        private readonly ConcurrentQueue<MessageDto> _receiverQueue;
+        public CsCircuitComponentConnection(TcpClient client)
         {
             _senderQueue = new ConcurrentQueue<MessageDto>();
-            _circuitListener = new CsMessageListener(client, receivingQueue);
+            _receiverQueue = new ConcurrentQueue<MessageDto>();
+            _circuitListener = new CsMessageListener(client, _receiverQueue);
             _circuitSender = new CsMessageSender(client, _senderQueue);
         }
 
-        public ConcurrentQueue<MessageDto> GetSenderQueue
+        public ConcurrentQueue<MessageDto> ReceiverQueue
+        {
+            get { return _receiverQueue; }
+        }
+
+        public ConcurrentQueue<MessageDto> SenderQueue
         {
             get { return _senderQueue; }
         }

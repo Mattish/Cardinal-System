@@ -7,7 +7,7 @@ namespace Cardinal_System_Circuit
         static void Main(string[] args)
         {
             var circuit = new CsCircuit(25251);
-            circuit.StartTest();
+            circuit.Start();
             Console.WriteLine("Listening on port {0}", 25251);
             Console.ReadKey();
         }

@@ -15,20 +15,16 @@ namespace Cardinal_System_Circuit
         private readonly TcpListener _tcpListener;
         private readonly ConcurrentDictionary<long, CsCircuitComponentConnection> _componentConnections;
         private readonly List<CsCircuitComponentConnection> _unnumberedComponentConnections;
-        private readonly ConcurrentQueue<MessageDto> _receivingQueue;
         private readonly Task _listenerTask;
         private readonly Task _distributingTask;
 
-        private readonly Dictionary<long, IPEndPoint> _componentAddresses;
         private readonly Dictionary<long, List<long>> _componentsInterestInEntity;
         private bool doProcessing;
 
         public CsCircuitConnector(IPAddress ipAddress, int port)
         {
-            _componentAddresses = new Dictionary<long, IPEndPoint>();
             _componentsInterestInEntity = new Dictionary<long, List<long>>();
 
-            _receivingQueue = new ConcurrentQueue<MessageDto>();
             _componentConnections = new ConcurrentDictionary<long, CsCircuitComponentConnection>();
             _ipAddress = ipAddress;
             _port = port;
@@ -43,35 +39,63 @@ namespace Cardinal_System_Circuit
         {
             while (doProcessing)
             {
-                while (!_receivingQueue.IsEmpty)
+                for (int index = 0; index < _unnumberedComponentConnections.Count; index++)
                 {
-                    MessageDto messageDto;
-                    if (_receivingQueue.TryDequeue(out messageDto))
+                    var unnumberedComponentConnection = _unnumberedComponentConnections[index];
+                    if (!unnumberedComponentConnection.ReceiverQueue.IsEmpty)
                     {
-                        Console.WriteLine("Received message Family:{0} Type:{1} SourceId:{2} TargetId:{3}",
-                            messageDto.Family, messageDto.Type, messageDto.SourceId, messageDto.TargetId);
-                        switch (messageDto.Family)
+                        MessageDto messageDto;
+                        if (unnumberedComponentConnection.ReceiverQueue.TryDequeue(out messageDto))
                         {
-                            case MessageFamily.PhysicalEntity:
-                                // So for now send it to everything
-                                foreach (var csCircuitComponentConnection in _componentConnections)
+                            if (messageDto.Type == MessageType.RegisterWithCircuit)
+                            {
+                                var registerWithCircuitMessage = messageDto.TranslateFromDto() as RegisterWithCircuitMessage;
+                                var resultOfNewComponentRegister = _componentConnections.TryAdd(registerWithCircuitMessage.SourceId, unnumberedComponentConnection);
+                                if (resultOfNewComponentRegister)
                                 {
-                                    csCircuitComponentConnection.Value.GetSenderQueue.Enqueue(messageDto);
+                                    _unnumberedComponentConnections.Remove(unnumberedComponentConnection);
+                                    index--;
                                 }
-                                break;
-                            case MessageFamily.Component:
-                                switch (messageDto.Type)
-                                {
-                                    case MessageType.RegisterEntityInterest:
-                                        var componentMessage = messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
-                                        RegisterComponentInterestInEntity(componentMessage.SourceId, componentMessage.TargetId);
-                                        break;
-                                }
-                                break;
-                            case MessageFamily.Unknown:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
+                                Console.WriteLine(
+                                    !resultOfNewComponentRegister
+                                        ? "Was unable to tryAdd component connection - SourceId:{0}"
+                                        : "Added component connection - SourceId:{0}", messageDto.SourceId);
+                            }
+                        }
+                    }
+                }
+                foreach (var componentConnection in _componentConnections)
+                {
+                    if (!componentConnection.Value.ReceiverQueue.IsEmpty)
+                    {
+                        MessageDto messageDto;
+                        if (componentConnection.Value.ReceiverQueue.TryDequeue(out messageDto))
+                        {
+                            Console.WriteLine("Received message Family:{0} Type:{1} SourceId:{2} TargetId:{3}",
+                            messageDto.Family, messageDto.Type, messageDto.SourceId, messageDto.TargetId);
+                            switch (messageDto.Family)
+                            {
+                                case MessageFamily.PhysicalEntity:
+                                    // So for now send it to everything
+                                    foreach (var csCircuitComponentConnection in _componentConnections)
+                                    {
+                                        csCircuitComponentConnection.Value.SenderQueue.Enqueue(messageDto);
+                                    }
+                                    break;
+                                case MessageFamily.Component:
+                                    switch (messageDto.Type)
+                                    {
+                                        case MessageType.RegisterEntityInterest:
+                                            var registerEntityInterestMessage = messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
+                                            RegisterComponentInterestInEntity(registerEntityInterestMessage.SourceId, registerEntityInterestMessage.TargetId);
+                                            break;
+                                    }
+                                    break;
+                                case MessageFamily.Unknown:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
                         }
                     }
                 }
@@ -97,15 +121,10 @@ namespace Cardinal_System_Circuit
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");
-                var componentConnection = new CsCircuitComponentConnection(client, _receivingQueue);
+                var componentConnection = new CsCircuitComponentConnection(client);
                 componentConnection.Start();
                 _unnumberedComponentConnections.Add(componentConnection);
             }
-        }
-
-        public void RegisterComponentAddress(long componentId, IPEndPoint endpoint)
-        {
-            _componentAddresses.Add(componentId, endpoint);
         }
 
         public void RegisterComponentInterestInEntity(long componentId, long entityId)
