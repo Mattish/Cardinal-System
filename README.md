@@ -3,7 +3,7 @@ Cardinal-System
 
 Scalable MMO Engine. Created to assess my own ability to design a system and codebase. Based on SAO/GGO naming because why not. Working project in spare time. Please feel free to comment on any of the ideas or design here.
 
-## Design
+### Design
 
 Potentially need to split the components deeper:
 
