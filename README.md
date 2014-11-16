@@ -1,7 +1,7 @@
 Cardinal-System
 ===============
 
-Scalable MMO Engine. Working project in spare time. Please feel free to comment on any of the ideas or design here.
+Scalable MMO Engine. Created to assess my own ability to design a system and codebase. Based on SAO/GGO naming because why not. Working project in spare time. Please feel free to comment on any of the ideas or design here.
 
 ## Design
 
@@ -28,11 +28,16 @@ This contains all the transferable common objects. Internal domain objects can b
 
 ### Cardinal-System-Common
 
-Starting to put common components into here. For the moment only some networking.
+As it says on the tin.
 
-### To Do / To think about
+### To Do
+ * Receive incoming messages to somewhere and manage if they need to be delayed further(Entity messages) or not(Component messages)
+ * Area/grid/quadtree for Nodes. 
+ * Bordering, advertising to network for bordering, border feathering
+ * The rest of it
 
-* Which components try to initiate network connections?
+### To think about
 * How does bordering work between nodes? Current idea is 'RegisterOwner' and 'RegisterInterest' and potentially a 'EntityOwnerSwap'
 * Should there be 'idle' components waiting for allocation?
-* Should connectors queue messages up at all?
+* Dto stuff is okay and fast enough?
+* How much are we really going to be sending over Circuits/out from nodes? We want to limit as much network traffic which is dangerous with entities lingering at borders
