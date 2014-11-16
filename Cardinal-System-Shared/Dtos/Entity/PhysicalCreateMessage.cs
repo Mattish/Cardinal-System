@@ -1,6 +1,6 @@
 using System;
 
-namespace Cardinal_System_Shared
+namespace Cardinal_System_Shared.Dtos.Entity
 {
     public class PhysicalCreateMessage : Message
     {

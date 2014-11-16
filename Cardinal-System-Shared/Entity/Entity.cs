@@ -1,14 +1,21 @@
-﻿namespace Cardinal_System_Shared
+﻿using Cardinal_System_Shared.Dtos;
+
+namespace Cardinal_System_Shared.Entity
 {
     public abstract class Entity
     {
-        private readonly long _globalId;
+        private static long _globalId;
 
         public string EntityData = "EntityData";
 
 
         public long GlobalId { get; protected set; }
         public bool Changed { get; private set; }
+
+        protected Entity()
+        {
+            GlobalId = _globalId++;
+        }
 
         protected Entity(bool createdAsReceive = false)
         {

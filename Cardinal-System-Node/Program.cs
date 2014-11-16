@@ -19,7 +19,7 @@ namespace Cardinal_System_Node
                 {
                     string[] splitLine = line.Split(' ');
                     if (_node != null)
-                        _node.SendRegister(long.Parse(splitLine[1]));
+                        _node.SendRegister(new Tuple<long, long>(long.Parse(splitLine[1]), long.Parse(splitLine[2])));
                 }
                 else if (line.StartsWith("CONNECT "))
                 {
@@ -34,6 +34,10 @@ namespace Cardinal_System_Node
                         _node = null;
                     }
                 }
+                else if (line.StartsWith("CREATE"))
+                {
+                    _node.CreatePhysicalEntity();
+                }
             }
 
             if (_node != null)
@@ -44,10 +48,8 @@ namespace Cardinal_System_Node
         {
             if (_node == null)
             {
-                Console.WriteLine("Attempting to connect to circuit {0}:{1}", ipaddress, port);
                 _node = new CsNode(identity, IPAddress.Parse(ipaddress), 25251, port);
                 _node.Start();
-                Console.WriteLine("Connected to circuit");
             }
         }
     }

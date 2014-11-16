@@ -1,6 +1,8 @@
 ﻿using System;
+using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared.Dtos.Entity;
 
-namespace Cardinal_System_Shared
+namespace Cardinal_System_Shared.Entity
 {
     public class PhysicalEntity : Entity
     {
@@ -17,6 +19,7 @@ namespace Cardinal_System_Shared
         }
 
         public PhysicalEntity(long id, Tuple<int, int> initialTuple)
+            : base(true)
         {
             GlobalId = id;
             _xyPos = initialTuple;
@@ -38,19 +41,6 @@ namespace Cardinal_System_Shared
         public override EntityType GetEntityType()
         {
             return EntityType.BasicPhysicalEntity;
-        }
-    }
-
-    public class InformationEntity : Entity
-    {
-        public override EntityType GetEntityType()
-        {
-            return EntityType.BasicInformationEntity;
-        }
-
-        public override void UpdateState(object updateWith, MessageType changeType)
-        {
-            throw new NotImplementedException();
         }
     }
 }

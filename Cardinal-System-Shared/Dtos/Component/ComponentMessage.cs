@@ -1,4 +1,4 @@
-﻿namespace Cardinal_System_Shared
+﻿namespace Cardinal_System_Shared.Dtos.Component
 {
     public class ComponentMessage : Message
     {

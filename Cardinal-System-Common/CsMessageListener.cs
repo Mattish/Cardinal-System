@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dtos;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
@@ -64,9 +65,9 @@ namespace Cardinal_System_Common
             _listener.Start();
         }
 
-        public bool IsRunning()
+        public bool IsRunning
         {
-            return _listener.Status == TaskStatus.Running;
+            get { return _listener.Status == TaskStatus.Running; }
         }
     }
 }

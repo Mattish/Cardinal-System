@@ -7,6 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cardinal_System_Common;
 using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared.Dtos.Component;
+using Cardinal_System_Shared.Entity;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Node
@@ -22,7 +25,7 @@ namespace Cardinal_System_Node
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
         private readonly ConcurrentQueue<MessageDto> _receiverQueue;
 
-        public CsNodeMessageConnector(int listeningPort, IPAddress circuitAddress, int circuitPort, ConcurrentDictionary<int, Entity> entities)
+        public CsNodeMessageConnector(int listeningPort, IPAddress circuitAddress, int circuitPort, ConcurrentDictionary<long, Entity> entities)
         {
             _senderQueue = new ConcurrentQueue<MessageDto>();
             _receiverQueue = new ConcurrentQueue<MessageDto>();
@@ -50,78 +53,16 @@ namespace Cardinal_System_Node
             Start();
             _senderQueue.Enqueue(new RegisterEntityInterestMessage
             {
-                SourceId = 10,
-                TargetId = 69,
+                SourceId = new Tuple<long, long>(CsNode.Identity,10),
+                TargetId = new Tuple<long,long>(CsNode.Identity,69),
                 Type = MessageType.RegisterEntityInterest
             }.ToDto());
-        }
-
-        public void StartTest1()
-        {
-            var list = new List<Message>(2500);
-            for (int i = 0; i < 250; i++)
-            {
-                var entity = new PhysicalEntity();
-                for (int j = 0; j < 10; j++)
-                {
-                    list.Add(new PhysicalMovementMessage
-                    {
-                        SourceId = 0,
-                        TargetId = 2,
-                        NewPosition = new Tuple<int, int>(i, 1)
-                    });
-                }
-            }
-
-            foreach (var message in list)
-            {
-                var messageDto = new MessageDto
-                {
-                    Family = message.Type.GetMessageFamily(),
-                    Type = message.Type,
-                    SourceId = 1,
-                    TargetId = 2,
-                    Message = JsonConvert.SerializeObject(message)
-                };
-                _senderQueue.Enqueue(messageDto);
-            }
-            Console.WriteLine("Enqueue {0} messages", _senderQueue.Count);
-            list.Clear();
-            Start();
-            Thread.Sleep(2500);
-            for (int i = 0; i < 250; i++)
-            {
-                var entity = new PhysicalEntity();
-                for (int j = 0; j < 10; j++)
-                {
-                    list.Add(new PhysicalMovementMessage
-                    {
-                        SourceId = 0,
-                        TargetId = 2,
-                        NewPosition = new Tuple<int, int>(i, 1)
-                    });
-                }
-                Thread.Sleep(1);
-            }
-            foreach (var message in list)
-            {
-                var messageDto = new MessageDto
-                {
-                    Family = message.Type.GetMessageFamily(),
-                    Type = message.Type,
-                    SourceId = 1,
-                    TargetId = 2,
-                    Message = JsonConvert.SerializeObject(message)
-                };
-                _senderQueue.Enqueue(messageDto);
-            }
-            Console.WriteLine("Enqueue {0} messages", _senderQueue.Count);
         }
 
         public void Stop()
         {
             _client.Close();
-            while (_messageSender.IsRunning() && _messageListener.IsRunning())
+            while (_messageSender.IsRunning && _messageListener.IsRunning)
             {
                 Console.WriteLine("Waiting for sender and listener to finish up");
                 Thread.Sleep(TimeSpan.FromMilliseconds(100));
@@ -129,20 +70,28 @@ namespace Cardinal_System_Node
             Console.WriteLine("sender and listener finished up");
         }
 
-        public void SendInfo(long number)
+        public void SendInfo()
         {
             _senderQueue.Enqueue(new RegisterWithCircuitMessage
             {
-                SourceId = number
+                SourceId = new Tuple<long,long>(CsNode.Identity,0)
             }.ToDto());
         }
 
-        public void SendRegister(long entityNumber)
+        public void SendRegister(Tuple<long, long> entityNumber)
         {
             _senderQueue.Enqueue(new RegisterEntityInterestMessage
             {
-                SourceId = CsNode.Identity,
+                SourceId = new Tuple<long, long>(CsNode.Identity,0),
                 TargetId = entityNumber
+            }.ToDto());
+        }
+
+        public void SendNewEntity(PhysicalEntity newEntity)
+        {
+            _senderQueue.Enqueue(new RegisterEntityOwnerMessage
+            {
+                SourceId = new Tuple<long, long>(CsNode.Identity,newEntity.GlobalId),
             }.ToDto());
         }
     }

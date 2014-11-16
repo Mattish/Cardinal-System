@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsArea.cs" />
     <Compile Include="CsMessageListener.cs" />
     <Compile Include="CsMessageSender.cs" />
+    <Compile Include="IAsyncRunnable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

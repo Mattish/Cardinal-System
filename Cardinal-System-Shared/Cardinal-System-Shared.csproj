@@ -42,13 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeableState.cs" />
-    <Compile Include="ComponentMessage.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="PhysicalCreateMessage.cs" />
-    <Compile Include="PhysicalEntity.cs" />
-    <Compile Include="PhysicalMovementMessage.cs" />
+    <Compile Include="Dtos\Component\ComponentMessage.cs" />
+    <Compile Include="Entity\Entity.cs" />
+    <Compile Include="Entity\InformationEntity.cs" />
+    <Compile Include="Dtos\Message.cs" />
+    <Compile Include="Dtos\Entity\PhysicalCreateMessage.cs" />
+    <Compile Include="Entity\PhysicalEntity.cs" />
+    <Compile Include="Dtos\Entity\PhysicalMovementMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

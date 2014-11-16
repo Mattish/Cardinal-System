@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Cardinal_System_Shared.Dtos.Component;
+using Cardinal_System_Shared.Dtos.Entity;
 using Newtonsoft.Json;
 
-namespace Cardinal_System_Shared
+namespace Cardinal_System_Shared.Dtos
 {
 
     public abstract class Message
     {
-        public long SourceId;
-        public long TargetId;
+        public Tuple<long, long> SourceId;
+        public Tuple<long, long> TargetId;
         public MessageType Type;
 
         protected Message(MessageType type)
@@ -73,8 +76,8 @@ namespace Cardinal_System_Shared
     {
         public MessageFamily Family { get; set; }
         public MessageType Type { get; set; }
-        public long SourceId { get; set; }
-        public long TargetId { get; set; }
+        public Tuple<long, long> SourceId { get; set; }
+        public Tuple<long, long> TargetId { get; set; }
         public string Message { get; set; }
 
 

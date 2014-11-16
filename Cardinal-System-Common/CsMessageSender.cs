@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dtos;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
@@ -76,14 +77,9 @@ namespace Cardinal_System_Common
             }
         }
 
-        public bool IsRunning()
+        public bool IsRunning
         {
-            return _senderTask.Status == TaskStatus.Running;
+            get { return _senderTask.Status == TaskStatus.Running; }
         }
-    }
-
-    public interface IAsyncRunnable
-    {
-        bool IsRunning();
     }
 }
