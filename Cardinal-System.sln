@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Node", "Cardinal-System-Node\Cardinal-System-Node.csproj", "{15137F9D-2D22-49A7-98FF-D05E91D62103}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Circuit", "Cardinal-System-Circuit\Cardinal-System-Circuit.csproj", "{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Common", "Cardinal-System-Common\Cardinal-System-Common.csproj", "{A949D6BF-8301-46F1-ADEF-D73B15B48D66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Test", "Cardinal-System-Test\Cardinal-System-Test.csproj", "{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A949D6BF-8301-46F1-ADEF-D73B15B48D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A949D6BF-8301-46F1-ADEF-D73B15B48D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A949D6BF-8301-46F1-ADEF-D73B15B48D66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

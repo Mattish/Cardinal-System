@@ -29,6 +29,8 @@ namespace Cardinal_System_Common
     }
 
     public class CsCell
+    {
+    }
 
     public struct CsBox
     {

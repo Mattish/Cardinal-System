@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using Cardinal_System_Common;
 
 namespace Cardinal_System_Node
 {
@@ -48,7 +49,7 @@ namespace Cardinal_System_Node
         {
             if (_node == null)
             {
-                _node = new CsNode(identity, IPAddress.Parse(ipaddress), 25251, port);
+                _node = new CsNode(identity, new CsArea("someName", new Tuple<double, double>(1, 1), new Tuple<double, double>(0, 0)), IPAddress.Parse(ipaddress), 25251, port);
                 _node.Start();
             }
         }

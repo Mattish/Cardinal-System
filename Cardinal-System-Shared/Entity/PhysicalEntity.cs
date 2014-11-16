@@ -6,19 +6,19 @@ namespace Cardinal_System_Shared.Entity
 {
     public class PhysicalEntity : Entity
     {
-        private Tuple<int, int> _xyPos;
+        private Tuple<float, float> _xyPos;
 
-        public Tuple<int, int> Position
+        public Tuple<float, float> Position
         {
             get { return _xyPos; }
         }
 
         public PhysicalEntity()
         {
-            _xyPos = new Tuple<int, int>(0, 0);
+            _xyPos = new Tuple<float, float>(0, 0);
         }
 
-        public PhysicalEntity(long id, Tuple<int, int> initialTuple)
+        public PhysicalEntity(long id, Tuple<float, float> initialTuple)
             : base(true)
         {
             GlobalId = id;
@@ -32,7 +32,7 @@ namespace Cardinal_System_Shared.Entity
                 case MessageType.PhysicalEntityPosition:
                     var physicalMovementEntityChange = updateWith as PhysicalMovementMessage;
                     if (physicalMovementEntityChange != null)
-                        _xyPos = new Tuple<int, int>(physicalMovementEntityChange.NewPosition.Item1 + _xyPos.Item1,
+                        _xyPos = new Tuple<float, float>(physicalMovementEntityChange.NewPosition.Item1 + _xyPos.Item1,
                             physicalMovementEntityChange.NewPosition.Item2 + _xyPos.Item2);
                     break;
             }
