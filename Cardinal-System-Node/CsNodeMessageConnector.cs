@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using Cardinal_System_Common;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Dtos;
 using Cardinal_System_Shared.Dtos.Component;
 using Cardinal_System_Shared.Entity;
-using Newtonsoft.Json;
 
 namespace Cardinal_System_Node
 {
@@ -25,7 +21,7 @@ namespace Cardinal_System_Node
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
         private readonly ConcurrentQueue<MessageDto> _receiverQueue;
 
-        public CsNodeMessageConnector(int listeningPort, IPAddress circuitAddress, int circuitPort, ConcurrentDictionary<long, Entity> entities)
+        public CsNodeMessageConnector(int listeningPort, IPAddress circuitAddress, int circuitPort, ConcurrentDictionary<EntityId, Entity> entities)
         {
             _senderQueue = new ConcurrentQueue<MessageDto>();
             _receiverQueue = new ConcurrentQueue<MessageDto>();
@@ -53,8 +49,8 @@ namespace Cardinal_System_Node
             Start();
             _senderQueue.Enqueue(new RegisterEntityInterestMessage
             {
-                SourceId = new Tuple<long, long>(CsNode.Identity,10),
-                TargetId = new Tuple<long,long>(CsNode.Identity,69),
+                SourceId = new EntityId(CsNode.Identity, 10),
+                TargetId = new EntityId(CsNode.Identity, 69),
                 Type = MessageType.RegisterEntityInterest
             }.ToDto());
         }
@@ -74,15 +70,15 @@ namespace Cardinal_System_Node
         {
             _senderQueue.Enqueue(new RegisterWithCircuitMessage
             {
-                SourceId = new Tuple<long,long>(CsNode.Identity,0)
+                SourceId = new EntityId(CsNode.Identity, 0)
             }.ToDto());
         }
 
-        public void SendRegister(Tuple<long, long> entityNumber)
+        public void SendRegister(EntityId entityNumber)
         {
             _senderQueue.Enqueue(new RegisterEntityInterestMessage
             {
-                SourceId = new Tuple<long, long>(CsNode.Identity,0),
+                SourceId = new EntityId(CsNode.Identity, 0),
                 TargetId = entityNumber
             }.ToDto());
         }
@@ -91,7 +87,7 @@ namespace Cardinal_System_Node
         {
             _senderQueue.Enqueue(new RegisterEntityOwnerMessage
             {
-                SourceId = new Tuple<long, long>(CsNode.Identity,newEntity.GlobalId),
+                SourceId = newEntity.Id,
             }.ToDto());
         }
     }

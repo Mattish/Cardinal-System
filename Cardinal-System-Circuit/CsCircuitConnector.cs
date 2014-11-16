@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Cardinal_System_Shared.Dtos;
 using Cardinal_System_Shared.Dtos.Component;
+using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Circuit
 {
@@ -21,12 +22,12 @@ namespace Cardinal_System_Circuit
         private readonly Task _listenerTask;
         private readonly Task _distributingTask;
 
-        private readonly Dictionary<Tuple<long, long>, List<long>> _componentsInterestInEntity;
+        private readonly Dictionary<EntityId, List<long>> _componentsInterestInEntity;
         private bool doProcessing;
 
         public CsCircuitConnector(IPAddress ipAddress, int port)
         {
-            _componentsInterestInEntity = new Dictionary<Tuple<long, long>, List<long>>();
+            _componentsInterestInEntity = new Dictionary<EntityId, List<long>>();
 
             _componentConnections = new ConcurrentDictionary<long, CsCircuitComponentConnection>();
             _ipAddress = ipAddress;
@@ -67,7 +68,7 @@ namespace Cardinal_System_Circuit
                     if (messageDto.Type == MessageType.RegisterWithCircuit)
                     {
                         var registerWithCircuitMessage = messageDto.TranslateFromDto() as RegisterWithCircuitMessage;
-                        var resultOfNewComponentRegister = _componentConnections.TryAdd(registerWithCircuitMessage.SourceId.Item1, unnumberedComponentConnection);
+                        var resultOfNewComponentRegister = _componentConnections.TryAdd(registerWithCircuitMessage.SourceId.ComponentId, unnumberedComponentConnection);
                         if (resultOfNewComponentRegister)
                         {
                             _unnumberedComponentConnections.Remove(unnumberedComponentConnection);
@@ -105,7 +106,7 @@ namespace Cardinal_System_Circuit
                             {
                                 case MessageType.RegisterEntityInterest:
                                     var registerEntityInterestMessage = messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
-                                    RegisterComponentInterestInEntity(registerEntityInterestMessage.SourceId.Item1, registerEntityInterestMessage.TargetId);
+                                    RegisterComponentInterestInEntity(registerEntityInterestMessage.SourceId.ComponentId, registerEntityInterestMessage.TargetId);
                                     break;
                             }
                             break;
@@ -153,7 +154,7 @@ namespace Cardinal_System_Circuit
             }
         }
 
-        public void RegisterComponentInterestInEntity(long componentId, Tuple<long, long> entityId)
+        public void RegisterComponentInterestInEntity(long componentId, EntityId entityId)
         {
             if (!_componentsInterestInEntity.ContainsKey(entityId))
                 _componentsInterestInEntity.Add(entityId, new List<long>());

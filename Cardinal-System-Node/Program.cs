@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using Cardinal_System_Common;
+using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Node
 {
@@ -20,7 +20,7 @@ namespace Cardinal_System_Node
                 {
                     string[] splitLine = line.Split(' ');
                     if (_node != null)
-                        _node.SendRegister(new Tuple<long, long>(long.Parse(splitLine[1]), long.Parse(splitLine[2])));
+                        _node.SendRegister(new EntityId(long.Parse(splitLine[1]), long.Parse(splitLine[2])));
                 }
                 else if (line.StartsWith("CONNECT "))
                 {

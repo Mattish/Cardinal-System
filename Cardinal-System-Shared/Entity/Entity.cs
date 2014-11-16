@@ -5,22 +5,20 @@ namespace Cardinal_System_Shared.Entity
     public abstract class Entity
     {
         private static long _globalId;
+        private static long _nodeId;
 
         public string EntityData = "EntityData";
-
-
-        public long GlobalId { get; protected set; }
+        public EntityId Id { get; protected set; }
         public bool Changed { get; private set; }
 
         protected Entity()
         {
-            GlobalId = _globalId++;
+            Id = new EntityId(_nodeId, _globalId++);
         }
 
-        protected Entity(bool createdAsReceive = false)
+        protected Entity(EntityId entityId)
         {
-            if (!createdAsReceive)
-                GlobalId = _globalId++;
+            Id = entityId;
         }
 
         protected void StateChange()
@@ -30,6 +28,29 @@ namespace Cardinal_System_Shared.Entity
 
         public abstract void UpdateState(object updateWith, MessageType changeType);
         public abstract EntityType GetEntityType();
+
+        public static void SetNodeId(long nodeId)
+        {
+            _nodeId = nodeId;
+        }
+    }
+
+    public struct EntityId
+    {
+        public long ComponentId { get; private set; }
+        public long Id { get; private set; }
+
+        public EntityId(long componentId, long id)
+            : this()
+        {
+            Id = id;
+            ComponentId = componentId;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}-{1}", ComponentId, Id);
+        }
     }
 
     public enum EntityType

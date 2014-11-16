@@ -16,7 +16,7 @@ namespace Cardinal_System_Node
         private readonly int _circuitPort;
         private readonly int _listeningPort;
         private readonly CsNodeMessageConnector _messageConnector;
-        private readonly ConcurrentDictionary<long, Entity> _entities;
+        private readonly ConcurrentDictionary<EntityId, Entity> _entities;
 
         public CsNode(long identity, CsArea intialArea, IPAddress circuitAddress, int circuitPort, int listeningPort)
         {
@@ -24,7 +24,7 @@ namespace Cardinal_System_Node
             Area = intialArea;
             _circuitPort = circuitPort;
             _listeningPort = listeningPort;
-            _entities = new ConcurrentDictionary<long, Entity>();
+            _entities = new ConcurrentDictionary<EntityId, Entity>();
             _messageConnector = new CsNodeMessageConnector(listeningPort, circuitAddress, circuitPort, _entities);
         }
 
@@ -34,7 +34,7 @@ namespace Cardinal_System_Node
             _messageConnector.SendInfo();
         }
 
-        public void SendRegister(Tuple<long, long> entityNumber)
+        public void SendRegister(EntityId entityNumber)
         {
             _messageConnector.SendRegister(entityNumber);
         }
@@ -47,7 +47,7 @@ namespace Cardinal_System_Node
         public void CreatePhysicalEntity()
         {
             var newEntity = new PhysicalEntity();
-            _entities.TryAdd(newEntity.GlobalId, newEntity);
+            _entities.TryAdd(newEntity.Id, newEntity);
             _messageConnector.SendNewEntity(newEntity);
         }
     }

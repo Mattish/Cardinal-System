@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsNodeMessageCollector.cs" />
     <Compile Include="CsNodeMessageConnector.cs" />
     <Compile Include="CsNode.cs" />
     <Compile Include="Program.cs" />

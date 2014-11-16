@@ -18,10 +18,9 @@ namespace Cardinal_System_Shared.Entity
             _xyPos = new Tuple<float, float>(0, 0);
         }
 
-        public PhysicalEntity(long id, Tuple<float, float> initialTuple)
-            : base(true)
+        public PhysicalEntity(EntityId entityId, Tuple<float, float> initialTuple)
+            : base(entityId)
         {
-            GlobalId = id;
             _xyPos = initialTuple;
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cardinal_System_Shared.Dtos.Component;
 using Cardinal_System_Shared.Dtos.Entity;
+using Cardinal_System_Shared.Entity;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Shared.Dtos
@@ -9,9 +10,10 @@ namespace Cardinal_System_Shared.Dtos
 
     public abstract class Message
     {
-        public Tuple<long, long> SourceId;
-        public Tuple<long, long> TargetId;
+        public EntityId SourceId;
+        public EntityId TargetId;
         public MessageType Type;
+        public string MessageObj;
 
         protected Message(MessageType type)
         {
@@ -24,7 +26,7 @@ namespace Cardinal_System_Shared.Dtos
             {
                 Family = Type.GetMessageFamily(),
                 Type = Type,
-                Message = JsonConvert.SerializeObject(this),
+                MessageObj = MessageObj,
                 SourceId = SourceId,
                 TargetId = TargetId
             };
@@ -76,9 +78,9 @@ namespace Cardinal_System_Shared.Dtos
     {
         public MessageFamily Family { get; set; }
         public MessageType Type { get; set; }
-        public Tuple<long, long> SourceId { get; set; }
-        public Tuple<long, long> TargetId { get; set; }
-        public string Message { get; set; }
+        public EntityId SourceId { get; set; }
+        public EntityId TargetId { get; set; }
+        public string MessageObj { get; set; }
 
 
         public Message TranslateFromDto()
@@ -86,21 +88,64 @@ namespace Cardinal_System_Shared.Dtos
             switch (Type)
             {
                 case MessageType.PhysicalEntityPosition:
-                    return JsonConvert.DeserializeObject<PhysicalMovementMessage>(Message);
+                    return new PhysicalMovementMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.PhysicalEntityCreate:
-                    return JsonConvert.DeserializeObject<PhysicalCreateMessage>(Message);
+                    //TODO: fix this
+                    return JsonConvert.DeserializeObject<PhysicalCreateMessage>(MessageObj);
                 case MessageType.RegisterEntityInterest:
-                    return JsonConvert.DeserializeObject<RegisterEntityInterestMessage>(Message);
+                    return new RegisterEntityInterestMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.RegisterWithCircuit:
-                    return JsonConvert.DeserializeObject<RegisterWithCircuitMessage>(Message);
+                    return new RegisterWithCircuitMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.UnregisterWithCircuit:
-                    return JsonConvert.DeserializeObject<UnregisterWithCircuitMessage>(Message);
+                    return new UnregisterWithCircuitMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.UnregisterEntityInterest:
-                    return JsonConvert.DeserializeObject<UnregisterEntityInterestMessage>(Message);
+                    return new UnregisterEntityInterestMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.RegisterEntityOwner:
-                    return JsonConvert.DeserializeObject<RegisterEntityOwnerMessage>(Message);
+                    return new RegisterEntityOwnerMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 case MessageType.UnregisterEntityOwner:
-                    return JsonConvert.DeserializeObject<UnregisterEntityOwnerMessage>(Message);
+                    return new UnregisterEntityOwnerMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        Type = Type
+                    };
                 default:
                     return null;
             }
