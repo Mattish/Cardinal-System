@@ -30,6 +30,10 @@ This contains all the transferable common objects. Internal domain objects can b
 
 As it says on the tin.
 
+### Cardinal-System-Test
+
+Currently just used for testing out things. Most likely will add in formal unit tests at some point with NUnit.
+
 ### To Do
  * Receive incoming messages to somewhere and manage if they need to be delayed further(Entity messages) or not(Component messages)
  * Area/grid/quadtree for Nodes. 
