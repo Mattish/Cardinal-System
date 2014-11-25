@@ -55,4 +55,20 @@
         {
         }
     }
+
+    public class InitialInfoRequestMessage : Message
+    {
+        public InitialInfoRequestMessage()
+            : base(MessageType.InitialInfoRequest)
+        {
+        }
+    }
+
+    public class InitialInfoResponseMessage : Message
+    {
+        public InitialInfoResponseMessage()
+            : base(MessageType.InitialInfoResponse)
+        {
+        }
+    }
 }

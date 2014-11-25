@@ -1,34 +1,37 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Net;
-using System.Net.Sockets;
 using Cardinal_System_Common;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Entity;
 
-namespace Cardinal_System_Node
+namespace Cardinal_System_Server
 {
-    internal class CsNode
+    public class CsServer : CsNode
     {
-        public static long Identity { get; private set; }
         public static CsArea Area { get; private set; }
 
-        private readonly int _circuitPort;
-        private readonly int _listeningPort;
-        private readonly CsNodeMessageConnector _messageConnector;
+        private readonly CsServerConnector _messageConnector;
         private readonly ConcurrentDictionary<EntityId, Entity> _entities;
 
-        public CsNode(long identity, CsArea intialArea, IPAddress circuitAddress, int circuitPort, int listeningPort)
+        public CsServer(CsArea intialArea, IPAddress circuitAddress, int circuitPort)
         {
-            Identity = identity;
             Area = intialArea;
-            _circuitPort = circuitPort;
-            _listeningPort = listeningPort;
             _entities = new ConcurrentDictionary<EntityId, Entity>();
-            _messageConnector = new CsNodeMessageConnector(listeningPort, circuitAddress, circuitPort, _entities);
+            _messageConnector = new CsServerConnector(circuitAddress, circuitPort, Disconnected);
         }
 
-        public void Start()
+        private static void Disconnected(CsComponentConnection connection)
+        {
+            //TODO: do me
+        }
+
+        public override bool IsRunning
+        {
+            //TODO do me
+            get { return true; }
+        }
+
+        public override void Start()
         {
             _messageConnector.Start();
             _messageConnector.SendInfo();

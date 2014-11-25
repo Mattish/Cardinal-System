@@ -1,57 +1,56 @@
 ﻿using System;
-using System.Net;
+using System.Configuration;
+using System.Threading;
+using Cardinal_System_Circuit;
 using Cardinal_System_Common;
-using Cardinal_System_Shared.Entity;
+using Cardinal_System_HeathCliff;
 
 namespace Cardinal_System_Node
 {
     class Program
     {
-        public static CsNode _node;
         static void Main(string[] args)
         {
-            bool doLoop = true;
-            while (doLoop)
+            CsNode node = null;
+            if (args.Length == 1)
             {
-                var line = Console.ReadLine();
-                if (line.StartsWith("QUIT"))
-                    doLoop = false;
-                else if (line.StartsWith("REGISTER "))
+                if (args[0] == "HeathCliff")
                 {
-                    string[] splitLine = line.Split(' ');
-                    if (_node != null)
-                        _node.SendRegister(new EntityId(long.Parse(splitLine[1]), long.Parse(splitLine[2])));
+                    node = new CsHeathCliff(int.Parse(ConfigurationManager.AppSettings["HCPort"]));
+                    Console.WriteLine("Starting up as HeathCliff");
                 }
-                else if (line.StartsWith("CONNECT "))
+            }
+            else
+            {
+                var hostingPort = int.Parse(ConfigurationManager.AppSettings["Port"]);
+                var nodeInfo = CsHeathCliffConnector.GetNodeInfo(hostingPort);
+                if (nodeInfo != null)
                 {
-                    string[] splitLine = line.Split(' ');
-                    ConnectToNode(long.Parse(splitLine[1]), splitLine[2], int.Parse(splitLine[3]));
-                }
-                else if (line.StartsWith("DISCONNECT"))
-                {
-                    if (_node != null)
+                    if (nodeInfo.NodeType == CsNodeType.Circuit)
                     {
-                        _node.Stop();
-                        _node = null;
+                        node = new CsCircuit(hostingPort);
+                        Console.WriteLine("Starting up as Circuit");
                     }
                 }
-                else if (line.StartsWith("CREATE"))
+            }
+
+            if (node != null)
+            {
+                node.Start();
+                while (node.IsRunning)
                 {
-                    _node.CreatePhysicalEntity();
+                    Thread.Sleep(1);
                 }
             }
 
-            if (_node != null)
-                _node.Stop();
-        }
-
-        static void ConnectToNode(long identity, string ipaddress, int port)
-        {
-            if (_node == null)
-            {
-                _node = new CsNode(identity, new CsArea("someName", new Tuple<double, double>(1, 1), new Tuple<double, double>(0, 0)), IPAddress.Parse(ipaddress), 25251, port);
-                _node.Start();
-            }
+            // Get HeathCliff(HC) location from config
+            // Connect to HC
+            // Request ID, NodeType and Circuit Location(s)
+            // Receive ID, NodeType and Circuit Location(s)
+            // Drop
+            // Start up job if given
+            // Connect to Circuit(s)
+            // Broadcast Online
         }
     }
 }

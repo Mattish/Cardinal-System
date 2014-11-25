@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Dtos;
 using Newtonsoft.Json;
 
@@ -15,13 +15,14 @@ namespace Cardinal_System_Common
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
+        private readonly Action _disconnectAction;
         private readonly Task _senderTask;
 
-        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue)
+        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction)
         {
             _client = client;
             _senderQueue = senderQueue;
-            Console.WriteLine("Starting CsMessageSender with inital queue of {0}", _senderQueue.Count);
+            _disconnectAction = disconnectAction;
             _senderTask = new Task(DoSending);
         }
 
@@ -39,13 +40,15 @@ namespace Cardinal_System_Common
             {
                 var textWriter = new JsonTextWriter(new StreamWriter(stream, Encoding.UTF8, 8096, true));
                 textWriter.Formatting = Formatting.None;
+                int batchedCount;
+                var messageDtoArray = new MessageDtoArray
+                {
+                    Dtos = new List<MessageDto>()
+                };
                 while (_client.Connected)
                 {
-                    int batchedCount = 0;
-                    var messageDtoArray = new MessageDtoArray
-                    {
-                        MessageDtos = new List<MessageDto>()
-                    };
+                    batchedCount = 0;
+                    messageDtoArray.Dtos.Clear();
 
                     while (!_senderQueue.IsEmpty && batchedCount < 16)
                     {
@@ -55,7 +58,7 @@ namespace Cardinal_System_Common
 
                         if (couldDequeue)
                         {
-                            messageDtoArray.MessageDtos.Add(messageDto);
+                            messageDtoArray.Dtos.Add(messageDto);
                             batchedCount++;
                             dequeueAmount++;
                         }
@@ -68,6 +71,7 @@ namespace Cardinal_System_Common
                         textWriter.WriteRaw(json);
                         textWriter.Flush();
                     }
+                    Thread.Sleep(1); // TODO: signal message to send
                 }
                 Console.WriteLine("sender disconnected");
             }
@@ -75,6 +79,7 @@ namespace Cardinal_System_Common
             {
                 Console.WriteLine("Client sender error :( {0}", e.Message);
             }
+            _disconnectAction();
         }
 
         public bool IsRunning

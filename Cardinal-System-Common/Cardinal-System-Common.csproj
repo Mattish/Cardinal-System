@@ -42,10 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsComponentRequest.cs" />
+    <Compile Include="CsNodeType.cs" />
     <Compile Include="CsArea.cs" />
+    <Compile Include="CsComponentConnection.cs" />
     <Compile Include="CsMessageListener.cs" />
     <Compile Include="CsMessageSender.cs" />
     <Compile Include="IAsyncRunnable.cs" />
+    <Compile Include="CsNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

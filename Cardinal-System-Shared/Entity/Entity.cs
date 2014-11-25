@@ -35,13 +35,12 @@ namespace Cardinal_System_Shared.Entity
         }
     }
 
-    public struct EntityId
+    public class EntityId
     {
         public long ComponentId { get; private set; }
         public long Id { get; private set; }
 
         public EntityId(long componentId, long id)
-            : this()
         {
             Id = id;
             ComponentId = componentId;

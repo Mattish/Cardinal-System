@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Common", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Test", "Cardinal-System-Test\Cardinal-System-Test.csproj", "{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Server", "Cardinal-System-Server\Cardinal-System-Server.csproj", "{CF0EF68D-8073-4B52-BBE0-8785676512D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-HeathCliff", "Cardinal-System-HeathCliff\Cardinal-System-HeathCliff.csproj", "{78C0F8BC-3077-4767-9631-0BBA772C319C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FB924A0-8AD8-4C0D-8AB0-F0D92618645E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0EF68D-8073-4B52-BBE0-8785676512D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0EF68D-8073-4B52-BBE0-8785676512D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0EF68D-8073-4B52-BBE0-8785676512D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0EF68D-8073-4B52-BBE0-8785676512D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78C0F8BC-3077-4767-9631-0BBA772C319C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78C0F8BC-3077-4767-9631-0BBA772C319C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78C0F8BC-3077-4767-9631-0BBA772C319C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78C0F8BC-3077-4767-9631-0BBA772C319C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

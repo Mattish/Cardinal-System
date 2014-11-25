@@ -4,7 +4,6 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Dtos;
 using Newtonsoft.Json;
 
@@ -14,11 +13,13 @@ namespace Cardinal_System_Common
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
+        private readonly Action _disconnectAction;
         private Task _listener;
 
-        public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received)
+        public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction)
         {
             _received = received;
+            _disconnectAction = disconnectAction;
             _client = client;
         }
 
@@ -43,7 +44,7 @@ namespace Cardinal_System_Common
                     while (_client.Connected)
                     {
                         var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
-                        foreach (var entityDto in dtoArray.MessageDtos)
+                        foreach (var entityDto in dtoArray.Dtos)
                         {
                             _received.Enqueue(entityDto);
                         }
@@ -60,7 +61,7 @@ namespace Cardinal_System_Common
                 {
                     Console.WriteLine("Client listener error :( {0}", e.Message);
                 }
-
+                _disconnectAction();
             });
             _listener.Start();
         }

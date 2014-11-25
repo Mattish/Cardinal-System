@@ -7,15 +7,21 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Shared.Dtos
 {
-
     public abstract class Message
     {
         public EntityId SourceId;
         public EntityId TargetId;
         public MessageType Type;
-        public string MessageObj;
+        public object MessageObj;
+        public DateTime CreatedTime;
+
+        private Message()
+        {
+            CreatedTime = DateTime.UtcNow;
+        }
 
         protected Message(MessageType type)
+            : this()
         {
             Type = type;
         }
@@ -26,7 +32,7 @@ namespace Cardinal_System_Shared.Dtos
             {
                 Family = Type.GetMessageFamily(),
                 Type = Type,
-                MessageObj = MessageObj,
+                MessageObj = JsonConvert.SerializeObject(MessageObj),
                 SourceId = SourceId,
                 TargetId = TargetId
             };
@@ -55,6 +61,8 @@ namespace Cardinal_System_Shared.Dtos
                 case MessageType.UnregisterEntityInterest:
                 case MessageType.UnregisterEntityOwner:
                 case MessageType.UnregisterWithCircuit:
+                case MessageType.InitialInfoRequest:
+                case MessageType.InitialInfoResponse:
                     return MessageFamily.Component;
                 default:
                     return MessageFamily.Unknown;
@@ -72,16 +80,22 @@ namespace Cardinal_System_Shared.Dtos
         UnregisterEntityInterest,
         RegisterEntityOwner,
         UnregisterEntityOwner,
+        InitialInfoRequest,
+        InitialInfoResponse
     }
 
     public class MessageDto
     {
         public MessageFamily Family { get; set; }
         public MessageType Type { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public EntityId SourceId { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public EntityId TargetId { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string MessageObj { get; set; }
-
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime CreatedTime { get; set; }
 
         public Message TranslateFromDto()
         {
@@ -93,17 +107,19 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.PhysicalEntityCreate:
-                    //TODO: fix this
-                    return JsonConvert.DeserializeObject<PhysicalCreateMessage>(MessageObj);
+                //TODO: fix this
+                //return JsonConvert.DeserializeObject<PhysicalCreateMessage>(MessageObj);
                 case MessageType.RegisterEntityInterest:
                     return new RegisterEntityInterestMessage
                     {
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.RegisterWithCircuit:
@@ -112,6 +128,7 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.UnregisterWithCircuit:
@@ -120,6 +137,7 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.UnregisterEntityInterest:
@@ -128,6 +146,7 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.RegisterEntityOwner:
@@ -136,6 +155,7 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 case MessageType.UnregisterEntityOwner:
@@ -144,6 +164,25 @@ namespace Cardinal_System_Shared.Dtos
                         MessageObj = MessageObj,
                         SourceId = SourceId,
                         TargetId = TargetId,
+                        CreatedTime = CreatedTime,
+                        Type = Type
+                    };
+                case MessageType.InitialInfoRequest:
+                    return new InitialInfoRequestMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        CreatedTime = CreatedTime,
+                        Type = Type
+                    };
+                case MessageType.InitialInfoResponse:
+                    return new InitialInfoResponseMessage
+                    {
+                        MessageObj = MessageObj,
+                        SourceId = SourceId,
+                        TargetId = TargetId,
+                        CreatedTime = CreatedTime,
                         Type = Type
                     };
                 default:
@@ -154,6 +193,6 @@ namespace Cardinal_System_Shared.Dtos
 
     public class MessageDtoArray
     {
-        public List<MessageDto> MessageDtos { get; set; }
+        public List<MessageDto> Dtos { get; set; }
     }
 }
