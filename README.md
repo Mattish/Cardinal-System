@@ -1,6 +1,8 @@
 Cardinal-System
 ===============
 
+### Currently blocked on working out how to split a world up on the fly between nodes, while still maintaining quad tree for local
+
 Scalable MMO Engine. Created to assess my own ability to design a system and codebase. Based on SAO/GGO naming because why not. Working project in spare time. Please feel free to comment on any of the ideas or design here.
 
 ### Design
