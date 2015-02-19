@@ -1,15 +1,12 @@
 Cardinal-System
 ===============
-
-### Currently blocked on working out how to split a world up on the fly between nodes, while still maintaining quad tree for local
-
 Scalable MMO Engine. Created to assess my own ability to design a system and codebase. Based on SAO/GGO naming because why not. Working project in spare time. Please feel free to comment on any of the ideas or design here.
 
 ### Design
 
 Potentially need to split the components deeper:
 
-* Nodes - The hard work, connected via Circuits and can advertise/join/ditch/register/more things with circuits
+* ~~Nodes~~ Server - The hard work, connected via Circuits and can advertise/join/ditch/register/more things with circuits
 * Circuits - The pipes to connect everything, connect between nodes which have edges and for admin/debug connecting. Ideally all traffic will go over Circuits for easier metrics/debugging.
 
 Kind of have an idea about what I want for these components, although still unsure:
@@ -27,6 +24,8 @@ Things that need to be considered:
 ### Cardinal-System-Shared
 
 This contains all the transferable common objects. Internal domain objects can be physical or information. Message base type for every message. 
+
+Internal messages for components will be treated differently inside their own solutions.
 
 ### Cardinal-System-Common
 
