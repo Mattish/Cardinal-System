@@ -1,6 +1,6 @@
 using System;
 
-namespace Cardinal_System_Test
+namespace Cardinal_System_Test.DelayedActionTest
 {
     public class DelayAction : IComparable<DelayAction>
     {

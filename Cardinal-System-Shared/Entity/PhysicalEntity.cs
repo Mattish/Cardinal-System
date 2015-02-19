@@ -1,6 +1,4 @@
 ﻿using System;
-using Cardinal_System_Shared.Dtos;
-using Cardinal_System_Shared.Dtos.Entity;
 
 namespace Cardinal_System_Shared.Entity
 {
@@ -24,16 +22,11 @@ namespace Cardinal_System_Shared.Entity
             _xyPos = initialTuple;
         }
 
-        public override void UpdateState(object updateWith, MessageType changeType)
+        public override void UpdateState()
         {
-            switch (changeType)
+            foreach (var message in MessagesToProcess)
             {
-                case MessageType.PhysicalEntityPosition:
-                    var physicalMovementEntityChange = updateWith as PhysicalMovementMessage;
-                    if (physicalMovementEntityChange != null)
-                        _xyPos = new Tuple<float, float>(physicalMovementEntityChange.NewPosition.Item1 + _xyPos.Item1,
-                            physicalMovementEntityChange.NewPosition.Item2 + _xyPos.Item2);
-                    break;
+                
             }
         }
 

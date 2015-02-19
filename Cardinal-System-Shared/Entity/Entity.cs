@@ -1,4 +1,5 @@
-﻿using Cardinal_System_Shared.Dtos;
+﻿using System.Collections.Generic;
+using Cardinal_System_Shared.Dtos;
 
 namespace Cardinal_System_Shared.Entity
 {
@@ -6,6 +7,8 @@ namespace Cardinal_System_Shared.Entity
     {
         private static long _globalId;
         private static long _nodeId;
+
+        protected Queue<Message> MessagesToProcess = new Queue<Message>();
 
         public string EntityData = "EntityData";
         public EntityId Id { get; protected set; }
@@ -26,7 +29,13 @@ namespace Cardinal_System_Shared.Entity
             Changed = true;
         }
 
-        public abstract void UpdateState(object updateWith, MessageType changeType);
+        public abstract void UpdateState();
+
+        public void AddUpdate(Message updateWith)
+        {
+            MessagesToProcess.Enqueue(updateWith);
+        }
+
         public abstract EntityType GetEntityType();
 
         public static void SetNodeId(long nodeId)

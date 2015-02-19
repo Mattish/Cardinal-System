@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Node", "Cardinal-System-Node\Cardinal-System-Node.csproj", "{15137F9D-2D22-49A7-98FF-D05E91D62103}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Shared", "Cardinal-System-Shared\Cardinal-System-Shared.csproj", "{0DB3108A-959F-4460-A311-53DAC6D63211}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardinal-System-Circuit", "Cardinal-System-Circuit\Cardinal-System-Circuit.csproj", "{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}"
@@ -23,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{15137F9D-2D22-49A7-98FF-D05E91D62103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15137F9D-2D22-49A7-98FF-D05E91D62103}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15137F9D-2D22-49A7-98FF-D05E91D62103}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15137F9D-2D22-49A7-98FF-D05E91D62103}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DB3108A-959F-4460-A311-53DAC6D63211}.Release|Any CPU.ActiveCfg = Release|Any CPU

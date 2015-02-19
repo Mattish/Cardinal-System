@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cardinal_System_Test
+namespace Cardinal_System_Test.DelayedActionTest
 {
     public class DelayedExecutionTest
     {

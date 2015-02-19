@@ -4,13 +4,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cardinal_System_Common;
+using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared.Dtos;
 using Cardinal_System_Shared.Dtos.Component;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_HeathCliff
 {
-    public class CsHeathCliff : CsNode
+    public class CsHeathCliff : Getter<Message>, ICsNode
     {
         private readonly int _port;
         private readonly Stack<CsComponentRequestInfo> _circuitStack;
@@ -38,14 +39,9 @@ namespace Cardinal_System_HeathCliff
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");
-                var componentConnection = new CsComponentConnection(client, GotMessage, DisconnectedComponent);
+                var componentConnection = new CsComponentConnection(client);
                 connections.Add(componentConnection);
             }
-        }
-
-        private void DisconnectedComponent(CsComponentConnection connection)
-        {
-
         }
 
         private void GotMessage(MessageDto dto, CsComponentConnection connection)
@@ -78,16 +74,16 @@ namespace Cardinal_System_HeathCliff
             _doProcessing = false;
         }
 
-        public override bool IsRunning
-        {
-            get { return _doProcessing; }
-        }
-
-        public override void Start()
+        public void Start()
         {
             _doProcessing = true;
             _tcpListener = new TcpListener(IPAddress.Any, _port);
             _listenerTask = Task.Factory.StartNew(DoListening);
+        }
+
+        protected override void SpecificAction(Message request)
+        {
+            Console.WriteLine(request);
         }
     }
 }

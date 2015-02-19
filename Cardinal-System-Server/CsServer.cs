@@ -2,22 +2,24 @@
 using System.Collections.Concurrent;
 using System.Net;
 using Cardinal_System_Common;
+using Cardinal_System_Common.MessageNetworking;
+using Cardinal_System_Shared.Dtos;
 using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Server
 {
-    public class CsServer : CsNode
+    public class CsServer : Getter<Message>, ICsNode
     {
         public static CsArea Area { get; private set; }
 
         private readonly CsServerConnector _messageConnector;
         private readonly ConcurrentDictionary<EntityId, Entity> _entities;
 
-        public CsServer(CsArea intialArea, IPAddress circuitAddress, int circuitPort)
+        public CsServer(CsArea intialArea, string circuitAddress, int circuitPort)
         {
             Area = intialArea;
             _entities = new ConcurrentDictionary<EntityId, Entity>();
-            _messageConnector = new CsServerConnector(circuitAddress, circuitPort, Disconnected);
+            _messageConnector = new CsServerConnector(circuitAddress, circuitPort);
         }
 
         private static void Disconnected(CsComponentConnection connection)
@@ -25,33 +27,19 @@ namespace Cardinal_System_Server
             //TODO: do me
         }
 
-        public override bool IsRunning
-        {
-            //TODO do me
-            get { return true; }
-        }
-
-        public override void Start()
+        public void Start()
         {
             _messageConnector.Start();
-            _messageConnector.SendInfo();
         }
 
-        public void SendRegister(EntityId entityNumber)
+        protected override void SpecificAction(Message request)
         {
-            _messageConnector.SendRegister(entityNumber);
+            Console.WriteLine("CsServer - SpecificAction - {0}", request);
         }
 
         public void Stop()
         {
             _messageConnector.Stop();
-        }
-
-        public void CreatePhysicalEntity()
-        {
-            var newEntity = new PhysicalEntity();
-            _entities.TryAdd(newEntity.Id, newEntity);
-            _messageConnector.SendNewEntity(newEntity);
         }
     }
 }

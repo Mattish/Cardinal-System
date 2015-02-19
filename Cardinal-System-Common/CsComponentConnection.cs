@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared.Dtos;
 
 namespace Cardinal_System_Common
@@ -22,15 +23,10 @@ namespace Cardinal_System_Common
         private CsMessageSender _messageSender;
         private CsMessageListener _messageListener;
 
-        protected readonly Action<MessageDto, CsComponentConnection> GotMessageAction;
-        protected readonly Action<CsComponentConnection> DisconnectAction;
-
-        public CsComponentConnection(IPAddress initialAddress, int initialPort, Action<MessageDto, CsComponentConnection> gotMessageAction, Action<CsComponentConnection> disconnectAction)
+        public CsComponentConnection(string initialAddress, int initialPort)
         {
-            _initialAddress = initialAddress;
+            _initialAddress = IPAddress.Parse(initialAddress);
             _initialPort = initialPort;
-            GotMessageAction = gotMessageAction;
-            DisconnectAction = disconnectAction;
             _hasDisconnected = false;
             _client = new TcpClient();
             ReceiverQueue = new ConcurrentQueue<MessageDto>();
@@ -38,10 +34,8 @@ namespace Cardinal_System_Common
             _receiveMessageLoop = Task.Factory.StartNew(ReceiveMessageLoop);
         }
 
-        public CsComponentConnection(TcpClient client, Action<MessageDto, CsComponentConnection> gotMessageAction, Action<CsComponentConnection> disconnectAction)
+        public CsComponentConnection(TcpClient client)
         {
-            GotMessageAction = gotMessageAction;
-            DisconnectAction = disconnectAction;
             _hasDisconnected = false;
             _client = client;
             ReceiverQueue = new ConcurrentQueue<MessageDto>();
@@ -59,13 +53,13 @@ namespace Cardinal_System_Common
                     MessageDto dto;
                     if (ReceiverQueue.TryDequeue(out dto))
                     {
-                        GotMessageAction(dto, this);
+                        Message message = dto.TranslateFromDto();
+                        MessageHubV2.Send(message);
                     }
                 }
                 Thread.Sleep(1); //TODO: signal for message
             }
         }
-
 
         public void Start()
         {
@@ -95,7 +89,7 @@ namespace Cardinal_System_Common
             lock (_hasDiconnectedLock)
             {
                 if (_hasDisconnected)
-                    DisconnectAction(this);
+                    Console.Write("Woops"); // TODO: Handle Disconnect
                 _hasDisconnected = true;
             }
         }

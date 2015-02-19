@@ -30,11 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>Cardinal_System_Test.DelayedActionTest.DelayedExecutionTest</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,9 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DelayAction.cs" />
-    <Compile Include="DelayedExecution.cs" />
-    <Compile Include="DelayedExecutionTest.cs" />
+    <Compile Include="DelayedActionTest\DelayAction.cs" />
+    <Compile Include="DelayedActionTest\DelayedExecution.cs" />
+    <Compile Include="DelayedActionTest\DelayedExecutionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

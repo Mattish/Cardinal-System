@@ -46,13 +46,14 @@
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Entity\InformationEntity.cs" />
     <Compile Include="Dtos\Message.cs" />
-    <Compile Include="Dtos\Entity\PhysicalCreateMessage.cs" />
     <Compile Include="Entity\PhysicalEntity.cs" />
-    <Compile Include="Dtos\Entity\PhysicalMovementMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dtos\Entity\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

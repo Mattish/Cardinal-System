@@ -6,29 +6,25 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cardinal_System_Common;
+using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared.Dtos;
-using Cardinal_System_Shared.Dtos.Component;
-using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Circuit
 {
-    public class CsCircuitConnector
+    public class CsCircuitConnector : Getter<MessageDto>
     {
         private readonly TcpListener _tcpListener;
         private readonly ConcurrentDictionary<long, CsComponentConnection> _componentConnections;
         private readonly List<CsComponentConnection> _unnumberedComponentConnections;
         private readonly Task _listenerTask;
 
-        private readonly Dictionary<EntityId, List<long>> _componentsInterestInEntity;
         private bool _doProcessing;
 
-        public CsCircuitConnector(IPAddress ipAddress, int port)
+        public CsCircuitConnector(string address, int port)
         {
-            _componentsInterestInEntity = new Dictionary<EntityId, List<long>>();
-
             _componentConnections = new ConcurrentDictionary<long, CsComponentConnection>();
             _unnumberedComponentConnections = new List<CsComponentConnection>();
-            _tcpListener = new TcpListener(ipAddress, port);
+            _tcpListener = new TcpListener(IPAddress.Parse(address), port);
             _listenerTask = new Task(DoListening);
         }
 
@@ -44,52 +40,55 @@ namespace Cardinal_System_Circuit
             _componentConnections.TryRemove(connectionkey, out connection);
         }
 
-        private void GotMessage(MessageDto messageDto, CsComponentConnection sender)
+        public void Start()
+        {
+            _doProcessing = true;
+            _listenerTask.Start();
+        }
+
+        protected override void ExtraMessageRegisters()
+        {
+            MessageHubV2.Register<ConnectToHeathCliffRequest>(this, ConnectToHeathCliffRequest);
+            MessageHubV2.Register<ConnectToHeathCliffResponse>(this, ConnectToHeathCliffResponse);
+        }
+
+        private void ConnectToHeathCliffResponse(ConnectToHeathCliffResponse connectToHeathCliffResponse)
+        {
+            if (connectToHeathCliffResponse.Success)
+                Console.WriteLine("Connected to HC");
+            else
+                Console.WriteLine("Failed Connecting to HC");
+        }
+
+        private void ConnectToHeathCliffRequest(ConnectToHeathCliffRequest connectToHeathCliffRequest)
+        {
+            var componentConnection = new CsComponentConnection(connectToHeathCliffRequest.Address, connectToHeathCliffRequest.Port);
+            try
+            {
+                componentConnection.Start();
+                MessageHubV2.Send(new ConnectToHeathCliffResponse(true));
+            }
+            catch (Exception)
+            {
+                MessageHubV2.Send(new ConnectToHeathCliffResponse(false));
+            }
+
+
+        }
+
+        protected override void SpecificAction(MessageDto messageDto)
         {
             Console.WriteLine("Received message Family:{0} Type:{1} SourceId:{2} TargetId:{3}",
                 messageDto.Family, messageDto.Type, messageDto.SourceId, messageDto.TargetId);
             switch (messageDto.Family)
             {
                 case MessageFamily.PhysicalEntity:
-                    // So for now send it to everything
-                    foreach (var csCircuitComponentConnection in _componentConnections)
-                    {
-                        csCircuitComponentConnection.Value.SendMessage(messageDto);
-                    }
-                    break;
                 case MessageFamily.Component:
-                    switch (messageDto.Type)
-                    {
-                        case MessageType.RegisterEntityInterest:
-                            var registerEntityInterestMessage = messageDto.TranslateFromDto() as RegisterEntityInterestMessage;
-                            RegisterComponentInterestInEntity(registerEntityInterestMessage.SourceId.ComponentId, registerEntityInterestMessage.TargetId);
-                            break;
-                        case MessageType.RegisterWithCircuit:
-                            var registerWithCircuitMessage = messageDto.TranslateFromDto() as RegisterWithCircuitMessage;
-                            var resultOfNewComponentRegister = _componentConnections.TryAdd(registerWithCircuitMessage.SourceId.ComponentId, sender);
-                            if (resultOfNewComponentRegister)
-                            {
-                                _unnumberedComponentConnections.Remove(sender);
-                            }
-                            Console.WriteLine(
-                                !resultOfNewComponentRegister
-                                    ? "Was unable to tryAdd component connection - SourceId:{0}"
-                                    : "Added component connection - SourceId:{0}", messageDto.SourceId);
-                            break;
-                    }
-                    break;
                 case MessageFamily.Unknown:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-        }
-
-        public void Start()
-        {
-            _doProcessing = true;
-            _listenerTask.Start();
         }
 
         public void Stop()
@@ -104,17 +103,10 @@ namespace Cardinal_System_Circuit
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");
-                var componentConnection = new CsComponentConnection(client, GotMessage, DisconnectedComponent);
+                var componentConnection = new CsComponentConnection(client);
                 componentConnection.Start();
                 _unnumberedComponentConnections.Add(componentConnection);
             }
-        }
-
-        public void RegisterComponentInterestInEntity(long componentId, EntityId entityId)
-        {
-            if (!_componentsInterestInEntity.ContainsKey(entityId))
-                _componentsInterestInEntity.Add(entityId, new List<long>());
-            _componentsInterestInEntity[entityId].Add(componentId);
         }
 
     }

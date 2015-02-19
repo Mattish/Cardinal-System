@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C842CC8C-C79D-47EF-9AC2-E9B6D56F18FD}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cardinal_System_Circuit</RootNamespace>
     <AssemblyName>Cardinal-System-Circuit</AssemblyName>
@@ -39,6 +39,7 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,18 +48,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bootstrap.cs" />
     <Compile Include="CsCircuit.cs" />
     <Compile Include="CsCircuitConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cardinal-System-Common\Cardinal-System-Common.csproj">
       <Project>{a949d6bf-8301-46f1-adef-d73b15b48d66}</Project>
       <Name>Cardinal-System-Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cardinal-System-HeathCliff\Cardinal-System-HeathCliff.csproj">
+      <Project>{78C0F8BC-3077-4767-9631-0BBA772C319C}</Project>
+      <Name>Cardinal-System-HeathCliff</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cardinal-System-Shared\Cardinal-System-Shared.csproj">
       <Project>{0DB3108A-959F-4460-A311-53DAC6D63211}</Project>

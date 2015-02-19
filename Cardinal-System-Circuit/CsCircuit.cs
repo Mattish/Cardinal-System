@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Net;
 using Cardinal_System_Common;
+using Cardinal_System_Common.MessageNetworking;
+using Cardinal_System_Shared.Dtos;
 
 namespace Cardinal_System_Circuit
 {
-    public class CsCircuit : CsNode
+    public class CsCircuit : Getter<Message>, ICsNode
     {
         private readonly CsCircuitConnector _connector;
         private readonly int _port;
 
-        public CsCircuit(int port)
+        public CsCircuit(string address, int port)
         {
             _port = port;
-            _connector = new CsCircuitConnector(IPAddress.Parse("127.0.0.1"), port);
+            _connector = new CsCircuitConnector(address, port);
         }
 
-        public override bool IsRunning
-        {
-            //TODO do me
-            get { return true; }
-        }
-
-        public override void Start()
+        public void Start()
         {
             _connector.Start();
-            Console.WriteLine("Listening on port {0}", _port);
+        }
+
+        protected override void SpecificAction(Message request)
+        {
+            Console.WriteLine("CsCircuit - SpecificAction - {0}", request);
         }
     }
 }
