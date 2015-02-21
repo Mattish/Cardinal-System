@@ -10,12 +10,12 @@ namespace Cardinal_System_Shared.Dto.Component
         {
             return new HeathCliffNewIdResponse(NewId)
             {
-                SourceId = SourceId,
-                TargetId = TargetId,
-                SourceComponent = SourceComponent,
-                TargetComponent = TargetComponent,
-                CreatedTime = CreatedTime,
-                Type = Type,
+                SourceId = SI,
+                TargetId = TI,
+                SourceComponent = SC,
+                TargetComponent = TC,
+                CreatedTime = CT,
+                Type = T,
                 NewId = NewId
             };
         }

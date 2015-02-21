@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -13,16 +15,32 @@ namespace Cardinal_System_HeathCliff
     public class CsHeathCliff : Getter<Message>, ICsNode
     {
         private readonly int _port;
-        private readonly List<CsComponentConnection> connections;
+        private readonly ConcurrentDictionary<long, CsComponentConnection> _componentConnections = new ConcurrentDictionary<long, CsComponentConnection>();
+
+        private readonly List<CsComponentConnection> _unnumberedComponentConnections = new List<CsComponentConnection>(); // TODO: Use a thread-safe collection?
 
         private TcpListener _tcpListener;
         private Task _listenerTask;
         private bool _doProcessing;
         private long _nextComponentId;
 
+        private void DisconnectedComponent(ComponentConnectionDisconnect disconnectedComponentConnection)
+        {
+            lock (_unnumberedComponentConnections)
+            {
+                if (_unnumberedComponentConnections.Contains(disconnectedComponentConnection.CsComponentConnection))
+                {
+                    _unnumberedComponentConnections.Remove(disconnectedComponentConnection.CsComponentConnection);
+                    return;
+                }
+            }
+            var connectionkey = _componentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.CsComponentConnection).Key;
+            CsComponentConnection connection;
+            _componentConnections.TryRemove(connectionkey, out connection);
+        }
+
         public CsHeathCliff(int port)
         {
-            connections = new List<CsComponentConnection>();
             _port = port;
         }
 
@@ -33,8 +51,11 @@ namespace Cardinal_System_HeathCliff
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");
-                var componentConnection = new CsComponentConnection(client);
-                connections.Add(componentConnection);
+                var componentConnection = new CsComponentConnection(client); //TODO: When we receive a connection, will it always be unnumbered?
+                lock (_unnumberedComponentConnections)
+                {
+                    _unnumberedComponentConnections.Add(componentConnection);
+                }
             }
         }
 
@@ -61,7 +82,13 @@ namespace Cardinal_System_HeathCliff
             Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, wrappedMessage.Message, wrappedMessage.Message.SourceComponent);
             if (wrappedMessage.Message.Type == MessageType.HeathCliffNewIdRequest)
             {
-                wrappedMessage.CsComponentConnection.SendMessage(new HeathCliffNewIdResponse(_nextComponentId++));
+                lock (_unnumberedComponentConnections)
+                {
+                    wrappedMessage.CsComponentConnection.SendMessage(new HeathCliffNewIdResponse(_nextComponentId++));
+                    _unnumberedComponentConnections.Remove(wrappedMessage.CsComponentConnection);
+                    _componentConnections.TryAdd(_nextComponentId, wrappedMessage.CsComponentConnection);
+                }
+
             }
         }
 

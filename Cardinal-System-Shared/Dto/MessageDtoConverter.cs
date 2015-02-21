@@ -9,7 +9,7 @@ namespace Cardinal_System_Shared.Dto
     {
         protected override MessageDto Create(Type objectType, JObject jObject)
         {
-            var jTokenType = jObject["Type"];
+            var jTokenType = jObject["T"]; //Type
             var messageTypeInt = jTokenType.Value<int>();
             MessageType messageType = (MessageType)messageTypeInt;
             MessageDto returnDto;

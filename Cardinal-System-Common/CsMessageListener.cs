@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Cardinal_System_Shared;
 using Cardinal_System_Shared.Dto;
@@ -16,13 +17,15 @@ namespace Cardinal_System_Common
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _received;
         private readonly Action _disconnectAction;
+        private readonly ManualResetEventSlim _manualResetEventSlimReceiving;
         private Task _listener;
         private int _receiveTotal;
 
-        public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction)
+        public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction, ManualResetEventSlim manualResetEventSlimReceiving)
         {
             _received = received;
             _disconnectAction = disconnectAction;
+            _manualResetEventSlimReceiving = manualResetEventSlimReceiving;
             _client = client;
         }
 
@@ -52,6 +55,7 @@ namespace Cardinal_System_Common
                         {
                             _receiveTotal++;
                             _received.Enqueue(entityDto);
+                            _manualResetEventSlimReceiving.Set();
                         }
                         Console.WriteLine("receivedTotal:{0}", _receiveTotal);
                         if (!sr.EndOfStream)

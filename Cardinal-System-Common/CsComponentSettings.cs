@@ -1,6 +1,6 @@
 ﻿namespace Cardinal_System_Common
 {
-    public static class CsComponentSettings //TODO: Make slightly thread-safer
+    public static class CsComponentSettings
     {
         public static long ComponentId;
     }

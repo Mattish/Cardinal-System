@@ -15,16 +15,14 @@ namespace Cardinal_System_Circuit
     public class CsCircuitConnector
     {
         private readonly TcpListener _tcpListener;
-        private readonly ConcurrentDictionary<long, CsComponentConnection> _componentConnections;
-        private readonly List<CsComponentConnection> _unnumberedComponentConnections;
+        private readonly ConcurrentDictionary<long, CsComponentConnection> _componentConnections = new ConcurrentDictionary<long, CsComponentConnection>();
+        private readonly List<CsComponentConnection> _unnumberedComponentConnections = new List<CsComponentConnection>();
         private readonly Task _listenerTask;
 
         private bool _doProcessing;
 
         public CsCircuitConnector(string address, int port)
         {
-            _componentConnections = new ConcurrentDictionary<long, CsComponentConnection>();
-            _unnumberedComponentConnections = new List<CsComponentConnection>();
             _tcpListener = new TcpListener(IPAddress.Parse(address), port);
             _listenerTask = new Task(DoListening);
         }

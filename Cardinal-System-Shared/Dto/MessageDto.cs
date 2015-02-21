@@ -4,20 +4,19 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Shared.Dto
 {
-    // TODO: Make the Dto smaller with field naming
     // TODO: Make MessageDto Immutable
     public abstract class MessageDto
     {
-        public MessageFamily Family { get; set; }
-        public MessageType Type { get; set; }
+        public MessageFamily F { get; set; } //Family
+        public MessageType T { get; set; } //Type
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public EntityId SourceId { get; set; }
+        public EntityId SI { get; set; } // SourceId
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public EntityId TargetId { get; set; }
-        public long SourceComponent { get; set; }
-        public long TargetComponent { get; set; }
+        public EntityId TI { get; set; } // TargetId
+        public long SC { get; set; } // SourceComponent
+        public long TC { get; set; } //TargetComponent
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime CreatedTime { get; set; }
+        public DateTime CT { get; set; } // CreatedTime
 
         public abstract Message TranslateFromDto();
     }

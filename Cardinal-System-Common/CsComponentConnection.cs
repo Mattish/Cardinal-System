@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -22,6 +23,8 @@ namespace Cardinal_System_Common
         private bool _hasDisconnected;
         private CsMessageSender _messageSender;
         private CsMessageListener _messageListener;
+        private readonly ManualResetEventSlim _manualResetEventSlimSender = new ManualResetEventSlim();
+        private readonly ManualResetEventSlim _manualResetEventSlimReceiving = new ManualResetEventSlim();
 
         public long Id { get; private set; }
 
@@ -67,7 +70,8 @@ namespace Cardinal_System_Common
                         }
                     }
                 }
-                Thread.Sleep(1); //TODO: signal for message
+                _manualResetEventSlimReceiving.Wait(TimeSpan.FromSeconds(1));
+                _manualResetEventSlimReceiving.Reset();
             }
         }
 
@@ -78,8 +82,8 @@ namespace Cardinal_System_Common
 
             if (_client.Connected)
             {
-                _messageSender = new CsMessageSender(_client, SenderQueue, HasDisconnected);
-                _messageListener = new CsMessageListener(_client, ReceiverQueue, HasDisconnected);
+                _messageSender = new CsMessageSender(_client, SenderQueue, HasDisconnected, _manualResetEventSlimSender);
+                _messageListener = new CsMessageListener(_client, ReceiverQueue, HasDisconnected, _manualResetEventSlimReceiving);
                 _messageListener.Start();
                 _messageSender.Start();
             }
@@ -112,11 +116,13 @@ namespace Cardinal_System_Common
             {
                 SenderQueue.Enqueue(messageDto);
             }
+            _manualResetEventSlimSender.Set();
         }
 
         public void SendMessage(Message message)
         {
             SenderQueue.Enqueue(message.ToDto());
+            _manualResetEventSlimSender.Set();
         }
     }
 }

@@ -8,12 +8,12 @@ namespace Cardinal_System_Shared.Dto.Component
         {
             return new HeathCliffOrderConnect
             {
-                Type = Type,
-                SourceId = SourceId,
-                TargetId = TargetId,
-                SourceComponent = SourceComponent,
-                TargetComponent = TargetComponent,
-                CreatedTime = CreatedTime
+                Type = T,
+                SourceId = SI,
+                TargetId = TI,
+                SourceComponent = SC,
+                TargetComponent = TC,
+                CreatedTime = CT
             };
         }
     }

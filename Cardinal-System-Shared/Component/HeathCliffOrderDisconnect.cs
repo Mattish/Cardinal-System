@@ -14,13 +14,13 @@ namespace Cardinal_System_Shared.Component
         {
             return new HeathCliffOrderDisconnectDto
             {
-                Family = Type.GetMessageFamily(),
-                Type = Type,
-                SourceId = SourceId,
-                TargetId = TargetId,
-                SourceComponent = SourceComponent,
-                TargetComponent = TargetComponent,
-                CreatedTime = CreatedTime
+                F = Type.GetMessageFamily(),
+                T = Type,
+                SI = SourceId,
+                TI = TargetId,
+                SC = SourceComponent,
+                TC = TargetComponent,
+                CT = CreatedTime
             };
         }
     }

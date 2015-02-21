@@ -18,12 +18,14 @@ namespace Cardinal_System_Common
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
         private readonly Action _disconnectAction;
         private readonly Task _senderTask;
+        private readonly ManualResetEventSlim _manualResetEventSlim;
 
-        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction)
+        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction, ManualResetEventSlim manualResetEventSlim)
         {
             _client = client;
             _senderQueue = senderQueue;
             _disconnectAction = disconnectAction;
+            _manualResetEventSlim = manualResetEventSlim;
             _senderTask = new Task(DoSending);
         }
 
@@ -59,7 +61,7 @@ namespace Cardinal_System_Common
 
                         if (couldDequeue)
                         {
-                            messageDto.SourceComponent = messageDto.SourceComponent == 0
+                            messageDto.SC = messageDto.SC == 0
                                 ? CsComponentSettings.ComponentId
                                 : 0;
 
@@ -77,7 +79,9 @@ namespace Cardinal_System_Common
                         textWriter.WriteRaw(json);
                         textWriter.Flush();
                     }
-                    Thread.Sleep(1); // TODO: signal message to send
+                    if (_senderQueue.IsEmpty)
+                        _manualResetEventSlim.Wait(TimeSpan.FromSeconds(1));
+                    _manualResetEventSlim.Reset();
                 }
                 Console.WriteLine("sender disconnected");
             }
