@@ -51,6 +51,7 @@
     <Compile Include="CsMessageSender.cs" />
     <Compile Include="IAsyncRunnable.cs" />
     <Compile Include="ICsNode.cs" />
+    <Compile Include="MessageNetworking\ComponentConnectionDisconnect.cs" />
     <Compile Include="MessageNetworking\Getter.cs" />
     <Compile Include="MessageNetworking\MessageHubV2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,7 +65,9 @@
       <Name>Cardinal-System-Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="InternalMessages\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

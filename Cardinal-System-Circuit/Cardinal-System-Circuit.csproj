@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="InternalMessages\ConnectToHeathCliffRequest.cs" />
+    <Compile Include="InternalMessages\ConnectToHeathCliffResponse.cs" />
     <Compile Include="CsCircuit.cs" />
     <Compile Include="CsCircuitConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

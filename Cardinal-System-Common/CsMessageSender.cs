@@ -6,7 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dto;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
@@ -67,6 +68,7 @@ namespace Cardinal_System_Common
                     {
                         sendTotal += batchedCount;
                         string json = JsonConvert.SerializeObject(messageDtoArray);
+                        Console.WriteLine("sendTotal: {0}", sendTotal);
                         json += "\r\n";
                         textWriter.WriteRaw(json);
                         textWriter.Flush();

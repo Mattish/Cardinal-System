@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Cardinal_System_Shared.Dtos;
 
 namespace Cardinal_System_Shared.Entity
 {

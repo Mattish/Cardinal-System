@@ -2,9 +2,11 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
-using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dto;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
@@ -15,6 +17,7 @@ namespace Cardinal_System_Common
         private readonly ConcurrentQueue<MessageDto> _received;
         private readonly Action _disconnectAction;
         private Task _listener;
+        private int _receiveTotal;
 
         public CsMessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction)
         {
@@ -31,14 +34,15 @@ namespace Cardinal_System_Common
                 var stream = _client.GetStream();
                 var serializer = new JsonSerializer
                 {
-                    CheckAdditionalContent = false
+                    CheckAdditionalContent = false,
+                    Converters = { new MessageDtoConverter() }
                 };
                 try
                 {
-                    var sr = new StreamReader(stream, Encoding.UTF8, false, 8096, true);
+                    var sr = new StreamReader(stream, Encoding.UTF8, false, 2 ^ 16, true);
                     var jsr = new JsonTextReader(sr)
                     {
-                        SupportMultipleContent = true
+                        SupportMultipleContent = true,
                     };
 
                     while (_client.Connected)
@@ -46,8 +50,10 @@ namespace Cardinal_System_Common
                         var dtoArray = serializer.Deserialize<MessageDtoArray>(jsr);
                         foreach (var entityDto in dtoArray.Dtos)
                         {
+                            _receiveTotal++;
                             _received.Enqueue(entityDto);
                         }
+                        Console.WriteLine("receivedTotal:{0}", _receiveTotal);
                         if (!sr.EndOfStream)
                             jsr.Read();
                     }

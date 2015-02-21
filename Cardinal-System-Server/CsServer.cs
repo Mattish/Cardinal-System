@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared;
 using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Server

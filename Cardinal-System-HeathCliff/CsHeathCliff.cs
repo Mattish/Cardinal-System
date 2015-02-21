@@ -5,8 +5,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared.Dtos;
-using Cardinal_System_Shared.Dtos.Component;
+using Cardinal_System_Shared;
 using Newtonsoft.Json;
 
 namespace Cardinal_System_HeathCliff
@@ -44,31 +43,6 @@ namespace Cardinal_System_HeathCliff
             }
         }
 
-        private void GotMessage(MessageDto dto, CsComponentConnection connection)
-        {
-            if (dto.Type == MessageType.InitialInfoRequest)
-            {
-                var requestInfo = JsonConvert.DeserializeObject<CsComponentRequestInfo>(dto.MessageObj);
-                //TODO: Logic for balancing out components
-                var componentInfo = new CsComponentRequest
-                {
-                    Id = _nextComponentId++,
-                    NodeType = _circuitStack.Count == 0 ? CsNodeType.Circuit : CsNodeType.Server,
-                    Circuits = _circuitStack.ToArray()
-                };
-                connection.SendMessage(new InitialInfoResponseMessage
-                {
-                    MessageObj = componentInfo
-                }.ToDto());
-                _nodeStack.Push(new CsComponentRequestInfo
-                {
-                    Id = componentInfo.Id,
-                    IpAddress = requestInfo.IpAddress,
-                    Port = requestInfo.Port
-                });
-            }
-        }
-
         public void Stop()
         {
             _doProcessing = false;
@@ -81,9 +55,10 @@ namespace Cardinal_System_HeathCliff
             _listenerTask = Task.Factory.StartNew(DoListening);
         }
 
+        private int _messageCounter;
         protected override void SpecificAction(Message request)
         {
-            Console.WriteLine(request);
+            //Console.WriteLine("{0} - {1}", _messageCounter++, request);
         }
     }
 }

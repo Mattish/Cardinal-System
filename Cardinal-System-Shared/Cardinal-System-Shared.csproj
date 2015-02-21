@@ -42,10 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dtos\Component\ComponentMessage.cs" />
+    <Compile Include="Component\ComponentMessage.cs" />
+    <Compile Include="Component\HeathCliffNewIdRequest.cs" />
+    <Compile Include="Component\HeathCliffNewIdResponse.cs" />
+    <Compile Include="Dto\Component\HeathCliffNewIdResponseDto.cs" />
+    <Compile Include="Dto\Component\HeathCliffOrderConnectDto.cs" />
+    <Compile Include="Dto\Component\HeathCliffOrderDisconnectDto.cs" />
+    <Compile Include="Dto\Component\HeathCliffNewIdRequestDto.cs" />
+    <Compile Include="Dto\MessageDto.cs" />
+    <Compile Include="Component\HeathCliffOrderConnect.cs" />
+    <Compile Include="Component\HeathCliffOrderDisconnect.cs" />
+    <Compile Include="Dto\MessageDtoConverter.cs" />
+    <Compile Include="MessageFamily.cs" />
+    <Compile Include="MessageType.cs" />
+    <Compile Include="MessageTypeExtensions.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Entity\InformationEntity.cs" />
-    <Compile Include="Dtos\Message.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Entity\PhysicalEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,7 +66,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dtos\Entity\" />
+    <Folder Include="Dto\Entity\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

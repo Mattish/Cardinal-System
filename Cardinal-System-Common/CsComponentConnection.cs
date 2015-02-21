@@ -6,7 +6,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared;
+using Cardinal_System_Shared.Dto;
 
 namespace Cardinal_System_Common
 {
@@ -22,6 +23,8 @@ namespace Cardinal_System_Common
         private bool _hasDisconnected;
         private CsMessageSender _messageSender;
         private CsMessageListener _messageListener;
+
+        public long Id { get; private set; }
 
         public CsComponentConnection(string initialAddress, int initialPort)
         {
@@ -89,7 +92,9 @@ namespace Cardinal_System_Common
             lock (_hasDiconnectedLock)
             {
                 if (_hasDisconnected)
-                    Console.Write("Woops"); // TODO: Handle Disconnect
+                {
+                    MessageHubV2.Send(new ComponentConnectionDisconnect(this));
+                }
                 _hasDisconnected = true;
             }
         }
@@ -102,9 +107,9 @@ namespace Cardinal_System_Common
             }
         }
 
-        public void SendMessage(MessageDto message)
+        public void SendMessage(Message message)
         {
-            SenderQueue.Enqueue(message);
+            SenderQueue.Enqueue(message.ToDto());
         }
     }
 }

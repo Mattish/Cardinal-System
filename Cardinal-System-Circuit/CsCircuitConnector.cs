@@ -5,9 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Cardinal_System_Circuit.InternalMessages;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared.Dtos;
+using Cardinal_System_Shared;
+using Cardinal_System_Shared.Component;
+using Cardinal_System_Shared.Dto;
 
 namespace Cardinal_System_Circuit
 {
@@ -28,14 +31,14 @@ namespace Cardinal_System_Circuit
             _listenerTask = new Task(DoListening);
         }
 
-        private void DisconnectedComponent(CsComponentConnection disconnectedComponentConnection)
+        private void DisconnectedComponent(ComponentConnectionDisconnect disconnectedComponentConnection)
         {
-            if (_unnumberedComponentConnections.Contains(disconnectedComponentConnection))
+            if (_unnumberedComponentConnections.Contains(disconnectedComponentConnection.CsComponentConnection))
             {
-                _unnumberedComponentConnections.Remove(disconnectedComponentConnection);
+                _unnumberedComponentConnections.Remove(disconnectedComponentConnection.CsComponentConnection);
                 return;
             }
-            var connectionkey = _componentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection).Key;
+            var connectionkey = _componentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.CsComponentConnection).Key;
             CsComponentConnection connection;
             _componentConnections.TryRemove(connectionkey, out connection);
         }
@@ -50,6 +53,7 @@ namespace Cardinal_System_Circuit
         {
             MessageHubV2.Register<ConnectToHeathCliffRequest>(this, ConnectToHeathCliffRequest);
             MessageHubV2.Register<ConnectToHeathCliffResponse>(this, ConnectToHeathCliffResponse);
+            MessageHubV2.Register<ComponentConnectionDisconnect>(this, DisconnectedComponent);
         }
 
         private void ConnectToHeathCliffResponse(ConnectToHeathCliffResponse connectToHeathCliffResponse)
@@ -67,6 +71,7 @@ namespace Cardinal_System_Circuit
             {
                 componentConnection.Start();
                 MessageHubV2.Send(new ConnectToHeathCliffResponse(true));
+                componentConnection.SendMessage(new HeathCliffOrderConnect());
             }
             catch (Exception)
             {
