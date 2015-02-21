@@ -43,8 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component\ComponentMessage.cs" />
+    <Compile Include="Component\Heartbeat.cs" />
     <Compile Include="Component\HeathCliffNewIdRequest.cs" />
     <Compile Include="Component\HeathCliffNewIdResponse.cs" />
+    <Compile Include="Dto\Component\HeartbeatDto.cs" />
     <Compile Include="Dto\Component\HeathCliffNewIdResponseDto.cs" />
     <Compile Include="Dto\Component\HeathCliffOrderConnectDto.cs" />
     <Compile Include="Dto\Component\HeathCliffOrderDisconnectDto.cs" />

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -57,7 +56,15 @@ namespace Cardinal_System_Common
                     if (ReceiverQueue.TryDequeue(out dto))
                     {
                         Message message = dto.TranslateFromDto();
-                        MessageHubV2.Send(message);
+                        if (message.SourceComponent == 0)
+                        {
+                            var wrappedMessage = new WrappedMessage(this, message);
+                            MessageHubV2.Send(wrappedMessage);
+                        }
+                        else
+                        {
+                            MessageHubV2.Send(message);
+                        }
                     }
                 }
                 Thread.Sleep(1); //TODO: signal for message

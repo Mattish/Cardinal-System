@@ -5,6 +5,7 @@
         HeathCliffOrderConnect,
         HeathCliffOrderDisconnect,
         HeathCliffNewIdRequest,
-        HeathCliffNewIdResponse
+        HeathCliffNewIdResponse,
+        Heartbeat
     }
 }

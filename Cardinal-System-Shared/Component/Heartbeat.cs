@@ -3,18 +3,16 @@ using Cardinal_System_Shared.Dto.Component;
 
 namespace Cardinal_System_Shared.Component
 {
-    public class HeathCliffNewIdResponse : Message
+    public class Heartbeat : Message
     {
-        public long NewId { get; set; }
-        public HeathCliffNewIdResponse(long newId)
-            : base(MessageType.HeathCliffNewIdResponse)
+        public Heartbeat()
+            : base(MessageType.Heartbeat)
         {
-            NewId = newId;
         }
 
         public override MessageDto ToDto()
         {
-            return new HeathCliffNewIdResponseDto
+            return new HeartbeatDto
             {
                 Family = Type.GetMessageFamily(),
                 Type = Type,
@@ -22,8 +20,7 @@ namespace Cardinal_System_Shared.Component
                 TargetId = TargetId,
                 SourceComponent = SourceComponent,
                 TargetComponent = TargetComponent,
-                CreatedTime = CreatedTime,
-                NewId = NewId
+                CreatedTime = CreatedTime
             };
         }
     }

@@ -59,6 +59,10 @@ namespace Cardinal_System_Common
 
                         if (couldDequeue)
                         {
+                            messageDto.SourceComponent = messageDto.SourceComponent == 0
+                                ? CsComponentSettings.ComponentId
+                                : 0;
+
                             messageDtoArray.Dtos.Add(messageDto);
                             batchedCount++;
                             dequeueAmount++;

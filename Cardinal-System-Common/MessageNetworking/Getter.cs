@@ -66,6 +66,6 @@ namespace Cardinal_System_Common.MessageNetworking
             }
         }
 
-        protected abstract void SpecificAction(TRequest request);
+        protected abstract void SpecificAction(TRequest message);
     }
 }

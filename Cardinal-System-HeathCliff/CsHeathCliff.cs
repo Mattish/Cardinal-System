@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared;
-using Newtonsoft.Json;
+using Cardinal_System_Shared.Component;
 
 namespace Cardinal_System_HeathCliff
 {
     public class CsHeathCliff : Getter<Message>, ICsNode
     {
         private readonly int _port;
-        private readonly Stack<CsComponentRequestInfo> _circuitStack;
-        private readonly Stack<CsComponentRequestInfo> _nodeStack;
         private readonly List<CsComponentConnection> connections;
 
         private TcpListener _tcpListener;
@@ -26,9 +24,6 @@ namespace Cardinal_System_HeathCliff
         {
             connections = new List<CsComponentConnection>();
             _port = port;
-            _nextComponentId = 1;
-            _circuitStack = new Stack<CsComponentRequestInfo>();
-            _nodeStack = new Stack<CsComponentRequestInfo>();
         }
 
         private void DoListening()
@@ -50,15 +45,30 @@ namespace Cardinal_System_HeathCliff
 
         public void Start()
         {
+            _nextComponentId = 1000;
             _doProcessing = true;
             _tcpListener = new TcpListener(IPAddress.Any, _port);
             _listenerTask = Task.Factory.StartNew(DoListening);
         }
 
-        private int _messageCounter;
-        protected override void SpecificAction(Message request)
+        protected override void ExtraMessageRegisters()
         {
-            //Console.WriteLine("{0} - {1}", _messageCounter++, request);
+            MessageHubV2.Register<WrappedMessage>(this, HandleWrappedMessage);
+        }
+
+        private void HandleWrappedMessage(WrappedMessage wrappedMessage)
+        {
+            Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, wrappedMessage.Message, wrappedMessage.Message.SourceComponent);
+            if (wrappedMessage.Message.Type == MessageType.HeathCliffNewIdRequest)
+            {
+                wrappedMessage.CsComponentConnection.SendMessage(new HeathCliffNewIdResponse(_nextComponentId++));
+            }
+        }
+
+        private int _messageCounter;
+        protected override void SpecificAction(Message message)
+        {
+            Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, message, message.SourceComponent);
         }
     }
 }

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsComponentRequest.cs" />
+    <Compile Include="CsComponentSettings.cs" />
     <Compile Include="CsNodeType.cs" />
     <Compile Include="CsArea.cs" />
     <Compile Include="CsComponentConnection.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="MessageNetworking\Getter.cs" />
     <Compile Include="MessageNetworking\MessageHubV2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WrappedMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

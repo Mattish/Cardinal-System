@@ -6,7 +6,7 @@ namespace Cardinal_System_Shared.Dto.Component
     {
         public override Message TranslateFromDto()
         {
-            return new HeathCliffOrderConnect
+            return new HeathCliffOrderDisconnect
             {
                 SourceId = SourceId,
                 TargetId = TargetId,

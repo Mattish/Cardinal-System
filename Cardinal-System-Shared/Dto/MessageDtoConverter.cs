@@ -27,6 +27,9 @@ namespace Cardinal_System_Shared.Dto
                 case MessageType.HeathCliffNewIdResponse:
                     returnDto = jObject.ToObject<HeathCliffNewIdResponseDto>();
                     break;
+                case MessageType.Heartbeat:
+                    returnDto = jObject.ToObject<HeartbeatDto>();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

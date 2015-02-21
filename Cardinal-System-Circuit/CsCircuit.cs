@@ -5,6 +5,7 @@ using Cardinal_System_Circuit.InternalMessages;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared;
+using Cardinal_System_Shared.Component;
 
 namespace Cardinal_System_Circuit
 {
@@ -27,9 +28,30 @@ namespace Cardinal_System_Circuit
             MessageHubV2.Send(new ConnectToHeathCliffRequest(ConfigurationManager.AppSettings["HCAddress"], int.Parse(ConfigurationManager.AppSettings["HCPort"])));
         }
 
-        protected override void SpecificAction(Message request)
+        protected override void ExtraMessageRegisters()
         {
-            Console.WriteLine("CsCircuit - SpecificAction - {0}", request);
+            MessageHubV2.Register<WrappedMessage>(this, HandleWrappedMessage);
+        }
+
+        protected override void SpecificAction(Message message)
+        {
+            Console.WriteLine("{0} SourceComponentId:{1}", message, message.SourceComponent);
+            if (message.Type == MessageType.HeathCliffNewIdResponse)
+            {
+                var newComponentId = ((HeathCliffNewIdResponse)message).NewId;
+                Console.WriteLine("{0} - {1}", message, newComponentId);
+                CsComponentSettings.ComponentId = newComponentId;
+                MessageHubV2.Send(new HeartbeatMessage
+                {
+                    ComponentId = -1
+                });
+            }
+        }
+
+        private void HandleWrappedMessage(WrappedMessage wrappedMessage)
+        {
+            Console.WriteLine("{0} SourceComponentId:{1}", wrappedMessage.Message, wrappedMessage.Message.SourceComponent);
+
         }
     }
 }

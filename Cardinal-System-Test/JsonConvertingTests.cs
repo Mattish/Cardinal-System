@@ -27,7 +27,7 @@ namespace Cardinal_System_Test
         [Test]
         public void Deserialize_CreatesCorrectType_HeathCliffNewIdResponse()
         {
-            var newIdRequest = new HeathCliffNewIdResponse();
+            var newIdRequest = new HeathCliffNewIdResponse(1234);
 
             DoAsserts(newIdRequest);
         }
@@ -44,6 +44,14 @@ namespace Cardinal_System_Test
         public void Deserialize_CreatesCorrectType_HeathCliffOrderDisconnect()
         {
             var newIdRequest = new HeathCliffOrderDisconnect();
+
+            DoAsserts(newIdRequest);
+        }
+
+        [Test]
+        public void Deserialize_CreatesCorrectType_Heartbeat()
+        {
+            var newIdRequest = new Heartbeat();
 
             DoAsserts(newIdRequest);
         }

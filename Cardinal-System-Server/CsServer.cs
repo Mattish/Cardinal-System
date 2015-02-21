@@ -32,9 +32,9 @@ namespace Cardinal_System_Server
             _messageConnector.Start();
         }
 
-        protected override void SpecificAction(Message request)
+        protected override void SpecificAction(Message message)
         {
-            Console.WriteLine("CsServer - SpecificAction - {0}", request);
+            Console.WriteLine("CsServer - SpecificAction - {0}", message);
         }
 
         public void Stop()

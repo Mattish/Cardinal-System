@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 using Cardinal_System_Circuit.InternalMessages;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Component;
-using Cardinal_System_Shared.Dto;
 
 namespace Cardinal_System_Circuit
 {
-    public class CsCircuitConnector : Getter<MessageDto>
+    public class CsCircuitConnector
     {
         private readonly TcpListener _tcpListener;
         private readonly ConcurrentDictionary<long, CsComponentConnection> _componentConnections;
@@ -45,15 +43,27 @@ namespace Cardinal_System_Circuit
 
         public void Start()
         {
+            ExtraMessageRegisters();
             _doProcessing = true;
             _listenerTask.Start();
         }
 
-        protected override void ExtraMessageRegisters()
+        private void ExtraMessageRegisters()
         {
             MessageHubV2.Register<ConnectToHeathCliffRequest>(this, ConnectToHeathCliffRequest);
             MessageHubV2.Register<ConnectToHeathCliffResponse>(this, ConnectToHeathCliffResponse);
             MessageHubV2.Register<ComponentConnectionDisconnect>(this, DisconnectedComponent);
+            MessageHubV2.Register<HeartbeatMessage>(this, HandleHeartbeatMessage);
+        }
+
+        private void HandleHeartbeatMessage(HeartbeatMessage heartbeatMessage)
+        {
+            var componentIdToSendTo = heartbeatMessage.ComponentId;
+            CsComponentConnection componentConnection;
+            if (_componentConnections.TryGetValue(componentIdToSendTo, out componentConnection))
+            {
+                componentConnection.SendMessage(new Heartbeat());
+            }
         }
 
         private void ConnectToHeathCliffResponse(ConnectToHeathCliffResponse connectToHeathCliffResponse)
@@ -70,29 +80,15 @@ namespace Cardinal_System_Circuit
             try
             {
                 componentConnection.Start();
+                _componentConnections.TryAdd(-1, componentConnection);
                 MessageHubV2.Send(new ConnectToHeathCliffResponse(true));
                 componentConnection.SendMessage(new HeathCliffOrderConnect());
+                componentConnection.SendMessage(new HeathCliffOrderDisconnect());
+                componentConnection.SendMessage(new HeathCliffNewIdRequest());
             }
             catch (Exception)
             {
                 MessageHubV2.Send(new ConnectToHeathCliffResponse(false));
-            }
-
-
-        }
-
-        protected override void SpecificAction(MessageDto messageDto)
-        {
-            Console.WriteLine("Received message Family:{0} Type:{1} SourceId:{2} TargetId:{3}",
-                messageDto.Family, messageDto.Type, messageDto.SourceId, messageDto.TargetId);
-            switch (messageDto.Family)
-            {
-                case MessageFamily.PhysicalEntity:
-                case MessageFamily.Component:
-                case MessageFamily.Unknown:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

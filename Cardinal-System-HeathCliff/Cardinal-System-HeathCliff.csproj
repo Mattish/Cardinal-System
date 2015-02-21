@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="CsHeathCliff.cs" />
+    <Compile Include="InternalMessage\ComponentIdRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
