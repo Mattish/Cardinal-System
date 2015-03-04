@@ -8,21 +8,21 @@ using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Server
 {
-    public class CsServer : Getter<Message>, ICsNode
+    public class Server : Getter<Message>, ICsNode
     {
-        public static CsArea Area { get; private set; }
+        public static Area Area { get; private set; }
 
-        private readonly CsServerConnector _messageConnector;
+        private readonly ServerConnector _messageConnector;
         private readonly ConcurrentDictionary<EntityId, Entity> _entities;
 
-        public CsServer(CsArea intialArea, string circuitAddress, int circuitPort)
+        public Server(Area intialArea, string circuitAddress, int circuitPort)
         {
             Area = intialArea;
             _entities = new ConcurrentDictionary<EntityId, Entity>();
-            _messageConnector = new CsServerConnector(circuitAddress, circuitPort);
+            _messageConnector = new ServerConnector(circuitAddress, circuitPort);
         }
 
-        private static void Disconnected(CsComponentConnection connection)
+        private static void Disconnected(ComponentConnection connection)
         {
             //TODO: do me
         }
@@ -34,7 +34,7 @@ namespace Cardinal_System_Server
 
         protected override void SpecificAction(Message message)
         {
-            Console.WriteLine("CsServer - SpecificAction - {0}", message);
+            Console.WriteLine("Server - SpecificAction - {0}", message);
         }
 
         public void Stop()

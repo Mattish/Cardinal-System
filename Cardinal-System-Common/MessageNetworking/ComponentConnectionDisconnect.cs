@@ -2,11 +2,11 @@
 {
     public class ComponentConnectionDisconnect
     {
-        public CsComponentConnection CsComponentConnection { get;private set; }
+        public ComponentConnection ComponentConnection { get;private set; }
 
-        public ComponentConnectionDisconnect(CsComponentConnection csComponentConnection)
+        public ComponentConnectionDisconnect(ComponentConnection componentConnection)
         {
-            CsComponentConnection = csComponentConnection;
+            ComponentConnection = componentConnection;
         }
     }
 }

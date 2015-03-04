@@ -2,13 +2,13 @@ using Cardinal_System_Shared.Component;
 
 namespace Cardinal_System_Shared.Dto.Component
 {
-    public class HeathCliffNewIdResponseDto : MessageDto
+    public class DisconnectionFromComponentDto : MessageDto
     {
-        public long NewId { get; set; }
+        public long ComponentIdConnectionFrom { get; set; }
 
         public override Message TranslateFromDto()
         {
-            return new HeathCliffNewIdResponse(NewId)
+            return new DisconnectionFromComponent(ComponentIdConnectionFrom)
             {
                 SourceId = SourceId,
                 TargetId = TargetId,
@@ -16,7 +16,6 @@ namespace Cardinal_System_Shared.Dto.Component
                 TargetComponent = TargetComponent,
                 CreatedTime = CreatedTime,
                 Type = Type,
-                NewId = NewId
             };
         }
     }

@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 
 namespace Cardinal_System_Common
 {
-    public class CsArea
+    public class Area
     {
         public CsBox Box { get; private set; }
         public string Name { get; private set; }
 
         private readonly ConcurrentDictionary<string, CsBox> _transistionAreas;
 
-        public CsArea(string name, Tuple<double, double> lowerRight, Tuple<double, double> upperLeft)
+        public Area(string name, Tuple<double, double> lowerRight, Tuple<double, double> upperLeft)
         {
             Name = name;
             Box = new CsBox(lowerRight, upperLeft);

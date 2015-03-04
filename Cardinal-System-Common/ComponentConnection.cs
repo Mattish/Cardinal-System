@@ -7,31 +7,31 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cardinal_System_Common.MessageNetworking;
 using Cardinal_System_Shared;
+using Cardinal_System_Shared.Component;
 using Cardinal_System_Shared.Dto;
 
 namespace Cardinal_System_Common
 {
-    public class CsComponentConnection
+    public class ComponentConnection
     {
-        private readonly IPAddress _initialAddress;
-        private readonly int _initialPort;
         private readonly ConcurrentQueue<MessageDto> SenderQueue;
         private readonly ConcurrentQueue<MessageDto> ReceiverQueue;
         private readonly TcpClient _client;
         private readonly object _hasDiconnectedLock = new object();
         private Task _receiveMessageLoop;
         private bool _hasDisconnected;
-        private CsMessageSender _messageSender;
-        private CsMessageListener _messageListener;
+        private MessageSender _messageSender;
+        private MessageListener _messageListener;
         private readonly ManualResetEventSlim _manualResetEventSlimSender = new ManualResetEventSlim();
         private readonly ManualResetEventSlim _manualResetEventSlimReceiving = new ManualResetEventSlim();
 
-        public long Id { get; private set; }
+        public string IpAddress { get; private set; }
+        public int Port { get; private set; }
 
-        public CsComponentConnection(string initialAddress, int initialPort)
+        public ComponentConnection(string initialAddress, int port)
         {
-            _initialAddress = IPAddress.Parse(initialAddress);
-            _initialPort = initialPort;
+            IpAddress = initialAddress;
+            Port = port;
             _hasDisconnected = false;
             _client = new TcpClient();
             ReceiverQueue = new ConcurrentQueue<MessageDto>();
@@ -39,7 +39,7 @@ namespace Cardinal_System_Common
             _receiveMessageLoop = Task.Factory.StartNew(ReceiveMessageLoop);
         }
 
-        public CsComponentConnection(TcpClient client)
+        public ComponentConnection(TcpClient client)
         {
             _hasDisconnected = false;
             _client = client;
@@ -58,15 +58,27 @@ namespace Cardinal_System_Common
                     MessageDto dto;
                     if (ReceiverQueue.TryDequeue(out dto))
                     {
-                        Message message = dto.TranslateFromDto();
-                        if (message.SourceComponent == 0)
+                        if (dto.TargetComponent == 0)
                         {
+                            var message = dto.TranslateFromDto();
                             var wrappedMessage = new WrappedMessage(this, message);
+                            if (message.Type == MessageType.HeathCliffNewIdRequest) // TODO: Make HC specific [1/3]
+                            {
+                                HeathCliffNewIdRequest request = message as HeathCliffNewIdRequest;
+                                IpAddress = request.IpAddress;
+                                Port = request.Port;
+                            }
                             MessageHubV2.Send(wrappedMessage);
+                        }
+                        else if (dto.TargetComponent == ComponentSettings.ComponentId)
+                        {
+                            var message = dto.TranslateFromDto();
+                            MessageHubV2.Send(message);
                         }
                         else
                         {
-                            MessageHubV2.Send(message);
+                            //Forward to intended target
+                            MessageHubV2.Send(dto);
                         }
                     }
                 }
@@ -78,12 +90,12 @@ namespace Cardinal_System_Common
         public void Start()
         {
             if (!_client.Connected)
-                _client.Connect(_initialAddress, _initialPort);
+                _client.Connect(IpAddress, Port);
 
             if (_client.Connected)
             {
-                _messageSender = new CsMessageSender(_client, SenderQueue, HasDisconnected, _manualResetEventSlimSender);
-                _messageListener = new CsMessageListener(_client, ReceiverQueue, HasDisconnected, _manualResetEventSlimReceiving);
+                _messageSender = new MessageSender(_client, SenderQueue, HasDisconnected, _manualResetEventSlimSender);
+                _messageListener = new MessageListener(_client, ReceiverQueue, HasDisconnected, _manualResetEventSlimReceiving);
                 _messageListener.Start();
                 _messageSender.Start();
             }
@@ -121,8 +133,14 @@ namespace Cardinal_System_Common
 
         public void SendMessage(Message message)
         {
+            message.SourceComponent = ComponentSettings.ComponentId;
             SenderQueue.Enqueue(message.ToDto());
             _manualResetEventSlimSender.Set();
+        }
+
+        public void SendMessageDto(MessageDto messageDto)
+        {
+            SenderQueue.Enqueue(messageDto);
         }
     }
 }

@@ -41,10 +41,10 @@ namespace Cardinal_System_Common.MessageNetworking
     {
         private static readonly ConcurrentQueue<object> _queue = new ConcurrentQueue<object>();
         private static readonly ManualResetEventSlim _manualResetEventSlim = new ManualResetEventSlim();
-        private static readonly ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>> _actionConcurrentDictionary = new ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>>();
+        private static readonly ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>> ActionConcurrentDictionary =
+            new ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>>();
 
         private static readonly Dictionary<Type, IEnumerable<Type>> superTypes = new Dictionary<Type, IEnumerable<Type>>();
-        private static readonly object superTypesLock = new object();
 
         private static object _collectionLock = new object();
         private static Task _task;
@@ -82,7 +82,7 @@ namespace Cardinal_System_Common.MessageNetworking
 
                             foreach (var superType in types)
                             {
-                                var list = _actionConcurrentDictionary.GetOrAdd(superType, new List<Tuple<object, MessageHubActionBase>>());
+                                var list = ActionConcurrentDictionary.GetOrAdd(superType, new List<Tuple<object, MessageHubActionBase>>());
                                 listOfActions.AddRange(list.Select(actionTuple => actionTuple.Item2));
                             }
                         }
@@ -102,7 +102,7 @@ namespace Cardinal_System_Common.MessageNetworking
         {
             lock (_collectionLock)
             {
-                var list = _actionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
+                var list = ActionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
                 var newMessageAction = new MessageHubAction<T>(sender, action);
                 list.Add(new Tuple<object, MessageHubActionBase>(sender, newMessageAction));
             }
@@ -112,7 +112,7 @@ namespace Cardinal_System_Common.MessageNetworking
         {
             lock (_collectionLock)
             {
-                var list = _actionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
+                var list = ActionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
                 var registered = list.Where(tuple => ReferenceEquals(tuple.Item1, sender)).ToArray();
                 foreach (var tuple in registered)
                 {
@@ -134,18 +134,14 @@ namespace Cardinal_System_Common.MessageNetworking
             {
                 return types;
             }
-
-            lock (superTypesLock) // TODO: Potentially dont need this lock due to lock in loop above
+            if (superTypes.TryGetValue(typeToTest, out types))
             {
-                if (superTypes.TryGetValue(typeToTest, out types))
-                {
-                    return types;
-                }
-
-                var superTypesFound = FindSuperTypes(typeToTest);
-                superTypes.Add(typeToTest, superTypesFound);
-                return superTypesFound;
+                return types;
             }
+
+            var superTypesFound = FindSuperTypes(typeToTest);
+            superTypes.Add(typeToTest, superTypesFound);
+            return superTypesFound;
         }
 
         private static List<Type> FindSuperTypes(Type typeToTest)

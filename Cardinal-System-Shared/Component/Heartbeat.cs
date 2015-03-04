@@ -3,7 +3,7 @@ using Cardinal_System_Shared.Dto.Component;
 
 namespace Cardinal_System_Shared.Component
 {
-    public class Heartbeat : Message
+    public class Heartbeat : ComponentMessage
     {
         public Heartbeat()
             : base(MessageType.Heartbeat)
@@ -14,13 +14,13 @@ namespace Cardinal_System_Shared.Component
         {
             return new HeartbeatDto
             {
-                F = Type.GetMessageFamily(),
-                T = Type,
-                SI = SourceId,
-                TI = TargetId,
-                SC = SourceComponent,
-                TC = TargetComponent,
-                CT = CreatedTime
+                Family = Type.GetMessageFamily(),
+                Type = Type,
+                SourceId = SourceId,
+                TargetId = TargetId,
+                SourceComponent = SourceComponent,
+                TargetComponent = TargetComponent,
+                CreatedTime = CreatedTime
             };
         }
     }

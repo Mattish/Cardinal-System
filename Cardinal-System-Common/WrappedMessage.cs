@@ -4,12 +4,12 @@ namespace Cardinal_System_Common
 {
     public class WrappedMessage
     {
-        public CsComponentConnection CsComponentConnection { get; private set; }
+        public ComponentConnection ComponentConnection { get; private set; }
         public Message Message { get; private set; }
 
-        public WrappedMessage(CsComponentConnection csComponentConnection, Message message)
+        public WrappedMessage(ComponentConnection componentConnection, Message message)
         {
-            CsComponentConnection = csComponentConnection;
+            ComponentConnection = componentConnection;
             Message = message;
         }
     }

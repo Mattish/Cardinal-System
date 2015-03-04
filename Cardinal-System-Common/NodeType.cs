@@ -1,6 +1,6 @@
 ﻿namespace Cardinal_System_Common
 {
-    public enum CsNodeType
+    public enum NodeType
     {
         Unassigned,
         Server,

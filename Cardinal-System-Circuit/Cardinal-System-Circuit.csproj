@@ -51,8 +51,9 @@
     <Compile Include="Bootstrap.cs" />
     <Compile Include="InternalMessages\ConnectToHeathCliffRequest.cs" />
     <Compile Include="InternalMessages\ConnectToHeathCliffResponse.cs" />
-    <Compile Include="CsCircuit.cs" />
-    <Compile Include="CsCircuitConnector.cs" />
+    <Compile Include="Circuit.cs" />
+    <Compile Include="CircuitConnector.cs" />
+    <Compile Include="InternalMessages\DisconnectFromHeathCliff.cs" />
     <Compile Include="InternalMessages\HeartbeatMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

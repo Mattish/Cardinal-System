@@ -30,6 +30,12 @@ namespace Cardinal_System_Shared.Dto
                 case MessageType.Heartbeat:
                     returnDto = jObject.ToObject<HeartbeatDto>();
                     break;
+                case MessageType.ConnectedToComponent:
+                    returnDto = jObject.ToObject<ConnectionToComponentDto>();
+                    break;
+                case MessageType.DisconnectedFromComponent:
+                    returnDto = jObject.ToObject<DisconnectionFromComponentDto>();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

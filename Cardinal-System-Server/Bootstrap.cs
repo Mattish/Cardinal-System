@@ -10,10 +10,10 @@ namespace Cardinal_System_Server
         public static void Main(string[] args)
         {
             MessageHubV2.Start();
-            var area = new CsArea("Default", new Tuple<double, double>(10, 10), new Tuple<double, double>(-10, -10));
+            var area = new Area("Default", new Tuple<double, double>(10, 10), new Tuple<double, double>(-10, -10));
             var address = ConfigurationManager.AppSettings["ServerAddress"];
             var port = int.Parse(ConfigurationManager.AppSettings["ServerPort"]);
-            var server = new CsServer(area, address, port);
+            var server = new Server(area, address, port);
             Console.WriteLine("Starting up Server");
             Console.ReadKey();
         }

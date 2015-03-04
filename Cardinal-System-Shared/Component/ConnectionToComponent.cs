@@ -3,24 +3,27 @@ using Cardinal_System_Shared.Dto.Component;
 
 namespace Cardinal_System_Shared.Component
 {
-    public class HeathCliffOrderDisconnect : ComponentMessage
+    public class ConnectionToComponent : ComponentMessage
     {
-        public HeathCliffOrderDisconnect()
-            : base(MessageType.HeathCliffOrderDisconnect)
+        public long ComponentIdConnectionTo { get; private set; }
+
+        public ConnectionToComponent(long componentIdConnectionTo)
+            : base(MessageType.ConnectedToComponent)
         {
+            ComponentIdConnectionTo = componentIdConnectionTo;
         }
 
         public override MessageDto ToDto()
         {
-            return new HeathCliffOrderDisconnectDto
+            return new ConnectionToComponentDto()
             {
-                Family = Type.GetMessageFamily(),
-                Type = Type,
                 SourceId = SourceId,
                 TargetId = TargetId,
                 SourceComponent = SourceComponent,
                 TargetComponent = TargetComponent,
                 CreatedTime = CreatedTime,
+                Type = Type,
+                ComponentIdConnectionTo = ComponentIdConnectionTo
             };
         }
     }

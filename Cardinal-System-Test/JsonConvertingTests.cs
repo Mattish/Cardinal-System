@@ -20,7 +20,7 @@ namespace Cardinal_System_Test
         [Test]
         public void Deserialize_CreatesCorrectType_HeathCliffNewIdRequest()
         {
-            var newIdRequest = new HeathCliffNewIdRequest();
+            var newIdRequest = new HeathCliffNewIdRequest(ComponentType.Circuit, "SomeIpAddress", 1234);
             DoAsserts(newIdRequest);
         }
 
@@ -35,8 +35,7 @@ namespace Cardinal_System_Test
         [Test]
         public void Deserialize_CreatesCorrectType_HeathCliffOrderConnect()
         {
-            var newIdRequest = new HeathCliffOrderConnect();
-
+            var newIdRequest = new HeathCliffOrderConnect("SomeString", 1234, 1, ComponentType.Circuit);
             DoAsserts(newIdRequest);
         }
 
@@ -52,6 +51,22 @@ namespace Cardinal_System_Test
         public void Deserialize_CreatesCorrectType_Heartbeat()
         {
             var newIdRequest = new Heartbeat();
+
+            DoAsserts(newIdRequest);
+        }
+
+        [Test]
+        public void Deserialize_CreatesCorrectType_ConnectionToComponent()
+        {
+            var newIdRequest = new ConnectionToComponent(123);
+
+            DoAsserts(newIdRequest);
+        }
+
+        [Test]
+        public void Deserialize_CreatesCorrectType_DisconnectionToComponent()
+        {
+            var newIdRequest = new DisconnectionFromComponent(123);
 
             DoAsserts(newIdRequest);
         }

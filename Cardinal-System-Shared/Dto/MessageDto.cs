@@ -7,16 +7,20 @@ namespace Cardinal_System_Shared.Dto
     // TODO: Make MessageDto Immutable
     public abstract class MessageDto
     {
-        public MessageFamily F { get; set; } //Family
-        public MessageType T { get; set; } //Type
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public EntityId SI { get; set; } // SourceId
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public EntityId TI { get; set; } // TargetId
-        public long SC { get; set; } // SourceComponent
-        public long TC { get; set; } //TargetComponent
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime CT { get; set; } // CreatedTime
+        [JsonProperty(PropertyName = "F")]
+        public MessageFamily Family { get; set; }
+        [JsonProperty(PropertyName = "T")]
+        public MessageType Type { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "SI")]
+        public EntityId SourceId { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "TI")]
+        public EntityId TargetId { get; set; }
+        [JsonProperty(PropertyName = "SC")]
+        public long SourceComponent { get; set; }
+        [JsonProperty(PropertyName = "TC")]
+        public long TargetComponent { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "CT")]
+        public DateTime CreatedTime { get; set; }
 
         public abstract Message TranslateFromDto();
     }

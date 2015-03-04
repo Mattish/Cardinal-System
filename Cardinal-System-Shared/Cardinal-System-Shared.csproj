@@ -42,10 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentType.cs" />
     <Compile Include="Component\ComponentMessage.cs" />
+    <Compile Include="Component\ConnectionToComponent.cs" />
+    <Compile Include="Component\DisconnectionFromComponent.cs" />
+    <Compile Include="Dto\Component\ConnectionToComponentDto.cs" />
     <Compile Include="Component\Heartbeat.cs" />
     <Compile Include="Component\HeathCliffNewIdRequest.cs" />
     <Compile Include="Component\HeathCliffNewIdResponse.cs" />
+    <Compile Include="Dto\Component\DisconnectionFromComponentDto.cs" />
     <Compile Include="Dto\Component\HeartbeatDto.cs" />
     <Compile Include="Dto\Component\HeathCliffNewIdResponseDto.cs" />
     <Compile Include="Dto\Component\HeathCliffOrderConnectDto.cs" />

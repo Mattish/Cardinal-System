@@ -3,7 +3,7 @@ using Cardinal_System_Shared.Dto.Component;
 
 namespace Cardinal_System_Shared.Component
 {
-    public class HeathCliffNewIdResponse : Message
+    public class HeathCliffNewIdResponse : ComponentMessage
     {
         public long NewId { get; set; }
         public HeathCliffNewIdResponse(long newId)
@@ -16,13 +16,13 @@ namespace Cardinal_System_Shared.Component
         {
             return new HeathCliffNewIdResponseDto
             {
-                F = Type.GetMessageFamily(),
-                T = Type,
-                SI = SourceId,
-                TI = TargetId,
-                SC = SourceComponent,
-                TC = TargetComponent,
-                CT = CreatedTime,
+                Family = Type.GetMessageFamily(),
+                Type = Type,
+                SourceId = SourceId,
+                TargetId = TargetId,
+                SourceComponent = SourceComponent,
+                TargetComponent = TargetComponent,
+                CreatedTime = CreatedTime,
                 NewId = NewId
             };
         }

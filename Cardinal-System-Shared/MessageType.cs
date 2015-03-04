@@ -6,6 +6,8 @@
         HeathCliffOrderDisconnect,
         HeathCliffNewIdRequest,
         HeathCliffNewIdResponse,
-        Heartbeat
+        Heartbeat,
+        ConnectedToComponent,
+        DisconnectedFromComponent,
     }
 }

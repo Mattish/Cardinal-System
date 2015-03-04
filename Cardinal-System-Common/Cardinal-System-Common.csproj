@@ -43,13 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsComponentRequest.cs" />
-    <Compile Include="CsComponentSettings.cs" />
-    <Compile Include="CsNodeType.cs" />
-    <Compile Include="CsArea.cs" />
-    <Compile Include="CsComponentConnection.cs" />
-    <Compile Include="CsMessageListener.cs" />
-    <Compile Include="CsMessageSender.cs" />
+    <Compile Include="ComponentRequest.cs" />
+    <Compile Include="ComponentSettings.cs" />
+    <Compile Include="NodeType.cs" />
+    <Compile Include="Area.cs" />
+    <Compile Include="ComponentConnection.cs" />
+    <Compile Include="MessageListener.cs" />
+    <Compile Include="MessageSender.cs" />
     <Compile Include="IAsyncRunnable.cs" />
     <Compile Include="ICsNode.cs" />
     <Compile Include="MessageNetworking\ComponentConnectionDisconnect.cs" />

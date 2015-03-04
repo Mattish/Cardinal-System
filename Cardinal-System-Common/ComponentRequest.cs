@@ -1,13 +1,13 @@
 ﻿namespace Cardinal_System_Common
 {
-    public class CsComponentRequest
+    public class ComponentRequest
     {
         public long Id;
-        public CsNodeType NodeType;
-        public CsComponentRequestInfo[] Circuits;
+        public NodeType NodeType;
+        public ComponentRequestInfo[] Circuits;
     }
 
-    public class CsComponentRequestInfo
+    public class ComponentRequestInfo
     {
         public string IpAddress;
         public int Port;

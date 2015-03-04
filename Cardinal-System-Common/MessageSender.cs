@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Cardinal_System_Common
 {
-    public class CsMessageSender : IAsyncRunnable
+    public class MessageSender : IAsyncRunnable
     {
         private readonly TcpClient _client;
         private readonly ConcurrentQueue<MessageDto> _senderQueue;
@@ -20,7 +20,7 @@ namespace Cardinal_System_Common
         private readonly Task _senderTask;
         private readonly ManualResetEventSlim _manualResetEventSlim;
 
-        public CsMessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction, ManualResetEventSlim manualResetEventSlim)
+        public MessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction, ManualResetEventSlim manualResetEventSlim)
         {
             _client = client;
             _senderQueue = senderQueue;
@@ -61,8 +61,8 @@ namespace Cardinal_System_Common
 
                         if (couldDequeue)
                         {
-                            messageDto.SC = messageDto.SC == 0
-                                ? CsComponentSettings.ComponentId
+                            messageDto.SourceComponent = messageDto.SourceComponent == 0
+                                ? ComponentSettings.ComponentId
                                 : 0;
 
                             messageDtoArray.Dtos.Add(messageDto);
