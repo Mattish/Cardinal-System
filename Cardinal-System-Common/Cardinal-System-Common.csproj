@@ -45,6 +45,12 @@
   <ItemGroup>
     <Compile Include="ComponentRequest.cs" />
     <Compile Include="ComponentSettings.cs" />
+    <Compile Include="Heartbeater.cs" />
+    <Compile Include="InternalMessages\ConnectToHeathCliffRequest.cs" />
+    <Compile Include="InternalMessages\ConnectToHeathCliffResponse.cs" />
+    <Compile Include="InternalMessages\DisconnectFromHeathCliff.cs" />
+    <Compile Include="InternalMessages\HeartbeatMessage.cs" />
+    <Compile Include="MessageNetworking\Node.cs" />
     <Compile Include="NodeType.cs" />
     <Compile Include="Area.cs" />
     <Compile Include="ComponentConnection.cs" />
@@ -67,9 +73,7 @@
       <Name>Cardinal-System-Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="InternalMessages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

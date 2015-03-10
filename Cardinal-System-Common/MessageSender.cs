@@ -61,10 +61,6 @@ namespace Cardinal_System_Common
 
                         if (couldDequeue)
                         {
-                            messageDto.SourceComponent = messageDto.SourceComponent == 0
-                                ? ComponentSettings.ComponentId
-                                : 0;
-
                             messageDtoArray.Dtos.Add(messageDto);
                             batchedCount++;
                             dequeueAmount++;
@@ -74,7 +70,7 @@ namespace Cardinal_System_Common
                     {
                         sendTotal += batchedCount;
                         string json = JsonConvert.SerializeObject(messageDtoArray);
-                        Console.WriteLine("sendTotal: {0}", sendTotal);
+                        //Console.WriteLine("sendTotal: {0}", sendTotal);
                         json += "\r\n";
                         textWriter.WriteRaw(json);
                         textWriter.Flush();

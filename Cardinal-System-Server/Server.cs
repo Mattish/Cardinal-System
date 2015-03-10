@@ -1,45 +1,26 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Net;
+﻿using System.Collections.Concurrent;
 using Cardinal_System_Common;
 using Cardinal_System_Common.MessageNetworking;
-using Cardinal_System_Shared;
 using Cardinal_System_Shared.Entity;
 
 namespace Cardinal_System_Server
 {
-    public class Server : Getter<Message>, ICsNode
+    public class Server : Node
     {
-        public static Area Area { get; private set; }
-
-        private readonly ServerConnector _messageConnector;
+        public Area Area { get; private set; }
+        public Heartbeater Heartbeater { get; private set; }
         private readonly ConcurrentDictionary<EntityId, Entity> _entities;
 
-        public Server(Area intialArea, string circuitAddress, int circuitPort)
+        public Server(Area intialArea, string ipAddress, int port)
+            : base(ipAddress, port)
         {
             Area = intialArea;
             _entities = new ConcurrentDictionary<EntityId, Entity>();
-            _messageConnector = new ServerConnector(circuitAddress, circuitPort);
         }
 
-        private static void Disconnected(ComponentConnection connection)
+        protected override void ComponentSpecificMessageRegisters()
         {
-            //TODO: do me
-        }
 
-        public void Start()
-        {
-            _messageConnector.Start();
-        }
-
-        protected override void SpecificAction(Message message)
-        {
-            Console.WriteLine("Server - SpecificAction - {0}", message);
-        }
-
-        public void Stop()
-        {
-            _messageConnector.Stop();
         }
     }
 }

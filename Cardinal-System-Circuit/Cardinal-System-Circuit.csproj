@@ -49,12 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="InternalMessages\ConnectToHeathCliffRequest.cs" />
-    <Compile Include="InternalMessages\ConnectToHeathCliffResponse.cs" />
     <Compile Include="Circuit.cs" />
-    <Compile Include="CircuitConnector.cs" />
-    <Compile Include="InternalMessages\DisconnectFromHeathCliff.cs" />
-    <Compile Include="InternalMessages\HeartbeatMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +71,9 @@
       <Project>{0DB3108A-959F-4460-A311-53DAC6D63211}</Project>
       <Name>Cardinal-System-Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InternalMessages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

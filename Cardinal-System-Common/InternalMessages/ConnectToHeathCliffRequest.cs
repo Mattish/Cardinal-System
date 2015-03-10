@@ -1,4 +1,4 @@
-namespace Cardinal_System_Circuit.InternalMessages
+namespace Cardinal_System_Common.InternalMessages
 {
     public class ConnectToHeathCliffRequest
     {

@@ -56,7 +56,7 @@ namespace Cardinal_System_Common
                             _received.Enqueue(entityDto);
                             _manualResetEventSlimReceiving.Set();
                         }
-                        Console.WriteLine("receivedTotal:{0}", _receiveTotal);
+                        //Console.WriteLine("receivedTotal:{0}", _receiveTotal);
                         if (!sr.EndOfStream)
                             jsr.Read();
                     }

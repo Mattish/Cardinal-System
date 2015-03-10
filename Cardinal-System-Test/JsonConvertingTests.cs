@@ -51,8 +51,12 @@ namespace Cardinal_System_Test
         public void Deserialize_CreatesCorrectType_Heartbeat()
         {
             var newIdRequest = new Heartbeat();
+            newIdRequest.SourceComponent = 1234;
 
-            DoAsserts(newIdRequest);
+            var result = DoAsserts(newIdRequest);
+            Assert.That(result.SourceComponent, Is.EqualTo(newIdRequest.SourceComponent));
+            var resultMessage = result.TranslateFromDto();
+            Assert.That(resultMessage.SourceComponent, Is.EqualTo(newIdRequest.SourceComponent));
         }
 
         [Test]
@@ -71,7 +75,15 @@ namespace Cardinal_System_Test
             DoAsserts(newIdRequest);
         }
 
-        private void DoAsserts(Message original)
+        [Test]
+        public void Deserialize_CreatesCorrectType_ComponentInformationBroadcast()
+        {
+            var newIdRequest = new ComponentInformationBroadcast(123, ComponentType.Circuit);
+
+            DoAsserts(newIdRequest);
+        }
+
+        private MessageDto DoAsserts(Message original)
         {
             var newIdRequestDto = original.ToDto();
             var dtoAsString = JsonConvert.SerializeObject(newIdRequestDto);
@@ -83,6 +95,7 @@ namespace Cardinal_System_Test
 
             Assert.That(deserializeMessageDto, Is.Not.Null);
             Assert.That(deserializeMessageDto.GetType(), Is.EqualTo(newIdRequestDto.GetType()));
+            return deserializeMessageDto;
         }
     }
 }

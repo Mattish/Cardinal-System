@@ -11,7 +11,7 @@ namespace Cardinal_System_HeathCliff
         public static void Main(string[] args)
         {
             ComponentSettings.ComponentId = -1;
-            ComponentSettings.ComponentType = ComponentType.Circuit;
+            ComponentSettings.ComponentType = ComponentType.HeathCliff;
             MessageHubV2.Start();
             var port = int.Parse(ConfigurationManager.AppSettings["HCPort"]);
             var ipAddress = ConfigurationManager.AppSettings["HCAddress"];

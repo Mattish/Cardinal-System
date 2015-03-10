@@ -36,6 +36,9 @@ namespace Cardinal_System_Shared.Dto
                 case MessageType.DisconnectedFromComponent:
                     returnDto = jObject.ToObject<DisconnectionFromComponentDto>();
                     break;
+                case MessageType.ComponentInformationBroadcast:
+                    returnDto = jObject.ToObject<ComponentInformationBroadcastDto>();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +26,11 @@ namespace Cardinal_System_Common
 
         public string IpAddress { get; private set; }
         public int Port { get; private set; }
+
+        public bool IsConnected
+        {
+            get { return !_hasDisconnected; }
+        }
 
         public ComponentConnection(string initialAddress, int port)
         {

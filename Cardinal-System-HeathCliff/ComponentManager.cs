@@ -93,7 +93,8 @@ namespace Cardinal_System_HeathCliff
                     _components.TryRemove(componentId, out component);
                     Console.WriteLine("Removing ComponentId:{0} because Dead", componentId);
                 }
-                Thread.Sleep(_checkerLoopTime); // TODO: Remove Thread.Sleep [3/3]
+                //Thread.Sleep(_checkerLoopTime); // TODO: Remove Thread.Sleep [3/3]
+                Thread.Sleep(1);
             }
         }
     }

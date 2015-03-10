@@ -15,7 +15,7 @@ namespace Cardinal_System_Shared.Component
 
         public override MessageDto ToDto()
         {
-            return new ConnectionToComponentDto()
+            return new ConnectionToComponentDto
             {
                 SourceId = SourceId,
                 TargetId = TargetId,
