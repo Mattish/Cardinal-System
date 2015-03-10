@@ -36,10 +36,12 @@ As it says on the tin.
 Currently just used for testing out things. Most likely will add in formal unit tests at some point with NUnit.
 
 ### To Do
- * Receive incoming messages to somewhere and manage if they need to be delayed further(Entity messages) or not(Component messages)
- * Area/grid/quadtree for Nodes. 
- * Bordering, advertising to network for bordering, border feathering
- * The rest of it
+ * Server needs Entities
+ * Server needs Area
+ * Server needs to be able to split
+ * HeathCliff needs to manage nodes better
+ * Nodes need to be able to send out load info
+ * Check performance of Event sending
 
 ### To think about
 * How does bordering work between nodes? Current idea is 'RegisterOwner' and 'RegisterInterest' and potentially a 'EntityOwnerSwap'
