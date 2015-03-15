@@ -6,6 +6,7 @@ namespace Cardinal_System_Shared.Component
     public class HeathCliffNewIdResponse : ComponentMessage
     {
         public long NewId { get; set; }
+
         public HeathCliffNewIdResponse(long newId)
             : base(MessageType.HeathCliffNewIdResponse)
         {

@@ -10,7 +10,11 @@ namespace Cardinal_System_Test.DelayedActionTest
 
         public DateTime TimeSent;
         public Action Action;
-        public int DelayActionNumber { get { return _delayActionNumber; } }
+
+        public int DelayActionNumber
+        {
+            get { return _delayActionNumber; }
+        }
 
         public string Name
         {

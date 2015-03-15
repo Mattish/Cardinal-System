@@ -3,6 +3,8 @@
     public abstract class ComponentMessage : Message
     {
         protected ComponentMessage(MessageType type)
-            : base(type) { }
+            : base(type)
+        {
+        }
     }
 }

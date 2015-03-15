@@ -36,6 +36,7 @@ As it says on the tin.
 Currently just used for testing out things. Most likely will add in formal unit tests at some point with NUnit.
 
 ### To Do
+ * Nodes need to handle connecting to components differently
  * Server needs Entities
  * Server needs Area
  * Server needs to be able to split

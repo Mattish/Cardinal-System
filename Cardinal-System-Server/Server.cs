@@ -20,7 +20,6 @@ namespace Cardinal_System_Server
 
         protected override void ComponentSpecificMessageRegisters()
         {
-
         }
     }
 }

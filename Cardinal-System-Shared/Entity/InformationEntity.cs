@@ -4,7 +4,6 @@
     {
         public override void UpdateState()
         {
-            
         }
 
         public override EntityType GetEntityType()

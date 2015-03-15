@@ -70,8 +70,9 @@ namespace Cardinal_System_Test.DelayedActionTest
                             delayedAction.Action();
                             _sortedDelayActions.Remove(delayedAction);
                         }
-                        Console.WriteLine("TimeToExecute:{0}.{1} ExecutedAt:{2}.{3} - {4}", 
-                            delayedAction.TimeSent.Second, delayedAction.TimeSent.Millisecond, dateTimeNow.Second, dateTimeNow.Millisecond, delayedAction.Name);
+                        Console.WriteLine("TimeToExecute:{0}.{1} ExecutedAt:{2}.{3} - {4}",
+                            delayedAction.TimeSent.Second, delayedAction.TimeSent.Millisecond, dateTimeNow.Second,
+                            dateTimeNow.Millisecond, delayedAction.Name);
                         _autoResetEvent.Reset();
                     }
                 } while (false);

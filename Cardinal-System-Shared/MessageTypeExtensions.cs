@@ -24,7 +24,7 @@ namespace Cardinal_System_Shared
                 case MessageType.HeathCliffOrderConnect:
                     return typeof (HeathCliffOrderConnect);
                 case MessageType.HeathCliffOrderDisconnect:
-                    return typeof(HeathCliffOrderDisconnect);
+                    return typeof (HeathCliffOrderDisconnect);
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }

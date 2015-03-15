@@ -12,6 +12,7 @@ namespace Cardinal_System_Common.MessageNetworking
         private readonly object _sender;
         private readonly Action<T> _actionToCall;
         private readonly WeakReference _reference;
+
         public MessageHubAction(object sender, Action<T> action)
         {
             _sender = sender;
@@ -21,7 +22,7 @@ namespace Cardinal_System_Common.MessageNetworking
 
         public override void Execute(object o)
         {
-            var obj = (T)o;
+            var obj = (T) o;
             if (obj != null && _reference.IsAlive)
             {
                 _actionToCall(obj);
@@ -32,6 +33,7 @@ namespace Cardinal_System_Common.MessageNetworking
             }
         }
     }
+
     public abstract class MessageHubActionBase
     {
         public abstract void Execute(object o);
@@ -41,10 +43,13 @@ namespace Cardinal_System_Common.MessageNetworking
     {
         private static readonly ConcurrentQueue<object> _queue = new ConcurrentQueue<object>();
         private static readonly ManualResetEventSlim _manualResetEventSlim = new ManualResetEventSlim();
-        private static readonly ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>> ActionConcurrentDictionary =
-            new ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>>();
 
-        private static readonly Dictionary<Type, IEnumerable<Type>> superTypes = new Dictionary<Type, IEnumerable<Type>>();
+        private static readonly ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>>
+            ActionConcurrentDictionary =
+                new ConcurrentDictionary<Type, List<Tuple<object, MessageHubActionBase>>>();
+
+        private static readonly Dictionary<Type, IEnumerable<Type>> superTypes =
+            new Dictionary<Type, IEnumerable<Type>>();
 
         private static object _collectionLock = new object();
         private static Task _task;
@@ -82,7 +87,8 @@ namespace Cardinal_System_Common.MessageNetworking
 
                             foreach (var superType in types)
                             {
-                                var list = ActionConcurrentDictionary.GetOrAdd(superType, new List<Tuple<object, MessageHubActionBase>>());
+                                var list = ActionConcurrentDictionary.GetOrAdd(superType,
+                                    new List<Tuple<object, MessageHubActionBase>>());
                                 listOfActions.AddRange(list.Select(actionTuple => actionTuple.Item2));
                             }
                         }
@@ -95,14 +101,14 @@ namespace Cardinal_System_Common.MessageNetworking
                 _manualResetEventSlim.Wait(TimeSpan.FromMilliseconds(10));
                 _manualResetEventSlim.Reset();
             }
-
         }
 
         public static void Register<T>(object sender, Action<T> action)
         {
             lock (_collectionLock)
             {
-                var list = ActionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
+                var list = ActionConcurrentDictionary.GetOrAdd(typeof (T),
+                    new List<Tuple<object, MessageHubActionBase>>());
                 var newMessageAction = new MessageHubAction<T>(sender, action);
                 list.Add(new Tuple<object, MessageHubActionBase>(sender, newMessageAction));
             }
@@ -112,7 +118,8 @@ namespace Cardinal_System_Common.MessageNetworking
         {
             lock (_collectionLock)
             {
-                var list = ActionConcurrentDictionary.GetOrAdd(typeof(T), new List<Tuple<object, MessageHubActionBase>>());
+                var list = ActionConcurrentDictionary.GetOrAdd(typeof (T),
+                    new List<Tuple<object, MessageHubActionBase>>());
                 var registered = list.Where(tuple => ReferenceEquals(tuple.Item1, sender)).ToArray();
                 foreach (var tuple in registered)
                 {

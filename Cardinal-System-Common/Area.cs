@@ -25,7 +25,6 @@ namespace Cardinal_System_Common
 
     public class CsGrid
     {
-        
     }
 
     public class CsCell
@@ -43,7 +42,8 @@ namespace Cardinal_System_Common
         {
             UpperLeft = upperLeft;
             LowerRight = lowerRight;
-            Centre = new Tuple<double, double>((UpperLeft.Item1 - LowerRight.Item1) / 2D, (UpperLeft.Item2 - lowerRight.Item2) / 2D);
+            Centre = new Tuple<double, double>((UpperLeft.Item1 - LowerRight.Item1)/2D,
+                (UpperLeft.Item2 - lowerRight.Item2)/2D);
         }
     }
 }

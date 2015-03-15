@@ -26,7 +26,6 @@ namespace Cardinal_System_Shared.Entity
         {
             foreach (var message in MessagesToProcess)
             {
-                
             }
         }
 

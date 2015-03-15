@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Cardinal_System_Common.InternalMessages;
 using Cardinal_System_Shared;
 using Cardinal_System_Shared.Component;
-using Cardinal_System_Shared.Dto;
 
 namespace Cardinal_System_Common.MessageNetworking
 {
@@ -23,7 +22,8 @@ namespace Cardinal_System_Common.MessageNetworking
         private Heartbeater _heartbeater;
         private bool _doProcessing;
 
-        protected readonly ConcurrentDictionary<long, ComponentConnection> ComponentConnections = new ConcurrentDictionary<long, ComponentConnection>();
+        protected readonly ConcurrentDictionary<long, ComponentConnection> ComponentConnections =
+            new ConcurrentDictionary<long, ComponentConnection>();
 
         protected Node(string address, int port)
         {
@@ -37,7 +37,8 @@ namespace Cardinal_System_Common.MessageNetworking
         {
             _doProcessing = true;
             _listenerTask.Start();
-            MessageHubV2.Send(new ConnectToHeathCliffRequest(ConfigurationManager.AppSettings["HCAddress"], int.Parse(ConfigurationManager.AppSettings["HCPort"])));
+            MessageHubV2.Send(new ConnectToHeathCliffRequest(ConfigurationManager.AppSettings["HCAddress"],
+                int.Parse(ConfigurationManager.AppSettings["HCPort"])));
         }
 
         protected override void ExtraMessageRegisters()
@@ -55,22 +56,44 @@ namespace Cardinal_System_Common.MessageNetworking
 
         protected override void SpecificAction(Message message)
         {
-            Console.WriteLine("{0} SourceComponentId:{1} TargetComponentId:{2}", message, message.SourceComponent, message.TargetComponent);
+            Console.WriteLine("{0} SourceComponentId:{1} TargetComponentId:{2}", message, message.SourceComponent,
+                message.TargetComponent);
             if (message.Type == MessageType.HeathCliffNewIdResponse)
             {
-                var newComponentId = ((HeathCliffNewIdResponse)message).NewId;
+                var newComponentId = ((HeathCliffNewIdResponse) message).NewId;
                 ComponentSettings.ComponentId = newComponentId;
                 Console.WriteLine("We are now ComponentId:{0}", newComponentId);
+                ComponentConnection componentConnection;
+                if (ComponentConnections.TryGetValue(-1, out componentConnection))
+                {
+                    if (_heartbeater == null)
+                    {
+                        try
+                        {
+                            var secondsPerHeartbeat = ConfigurationManager.AppSettings["secondsPerHeartbeat"];
+                            var secondsPerHeartbeatint = int.Parse(secondsPerHeartbeat);
+                            _heartbeater = new Heartbeater(componentConnection, secondsPerHeartbeatint);
+                            _heartbeater.Start();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Unable to start up Heartbeater for Id:{0}: Type:{1} - {2}",
+                                ComponentSettings.ComponentId, ComponentSettings.ComponentType, e);
+                        }
+                    }
+                }
             }
             else if (message.Type == MessageType.HeathCliffOrderConnect)
             {
-                var hcOrderConnectMessage = (HeathCliffOrderConnect)message;
+                var hcOrderConnectMessage = (HeathCliffOrderConnect) message;
                 Console.WriteLine("HeathCliffOrderConnect - IpAddress:{0} Port:{1} Id:{2} Type:{3}",
-                    hcOrderConnectMessage.IpAddress, hcOrderConnectMessage.Port, hcOrderConnectMessage.ComponentId, hcOrderConnectMessage.ComponentType);
+                    hcOrderConnectMessage.IpAddress, hcOrderConnectMessage.Port, hcOrderConnectMessage.ComponentId,
+                    hcOrderConnectMessage.ComponentType);
 
                 if (hcOrderConnectMessage.ComponentId != -1)
                 {
-                    MessageHubV2.Send(new DisconnectFromHeathCliff(hcOrderConnectMessage.IpAddress, hcOrderConnectMessage.Port, hcOrderConnectMessage.ComponentId));
+                    MessageHubV2.Send(new DisconnectFromHeathCliff(hcOrderConnectMessage.IpAddress,
+                        hcOrderConnectMessage.Port, hcOrderConnectMessage.ComponentId));
                 }
             }
         }
@@ -80,9 +103,11 @@ namespace Cardinal_System_Common.MessageNetworking
             if (wrappedMessage.Message.Type == MessageType.ComponentInformationBroadcast)
             {
                 _unnumberedComponentConnections.Remove(wrappedMessage.ComponentConnection);
-                var componentInformationBroadcastMessage = (ComponentInformationBroadcast)wrappedMessage.Message;
-                ComponentConnections.TryAdd(componentInformationBroadcastMessage.ComponentId, wrappedMessage.ComponentConnection);
-                Console.WriteLine("ComponentInformationBroadcast - Node:{0} Type:{1}", componentInformationBroadcastMessage.ComponentId, componentInformationBroadcastMessage.ComponentType);
+                var componentInformationBroadcastMessage = (ComponentInformationBroadcast) wrappedMessage.Message;
+                ComponentConnections.TryAdd(componentInformationBroadcastMessage.ComponentId,
+                    wrappedMessage.ComponentConnection);
+                Console.WriteLine("ComponentInformationBroadcast - Node:{0} Type:{1}",
+                    componentInformationBroadcastMessage.ComponentId, componentInformationBroadcastMessage.ComponentType);
             }
             else
             {
@@ -98,7 +123,8 @@ namespace Cardinal_System_Common.MessageNetworking
                 Console.WriteLine("Disconnected from unnumbered node");
                 return;
             }
-            var pair = ComponentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.ComponentConnection);
+            var pair =
+                ComponentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.ComponentConnection);
             if (pair.Value != null)
             {
                 ComponentConnection connection;
@@ -126,15 +152,6 @@ namespace Cardinal_System_Common.MessageNetworking
             if (connectToHeathCliffResponse.Success)
             {
                 Console.WriteLine("Connected to HC");
-                ComponentConnection componentConnection;
-                if (ComponentConnections.TryGetValue(-1, out componentConnection))
-                {
-                    if (_heartbeater == null)
-                    {
-                        _heartbeater = new Heartbeater(componentConnection, 3);
-                        _heartbeater.Start();
-                    }
-                }
             }
             else
                 Console.WriteLine("Failed Connecting to HC");
@@ -142,13 +159,15 @@ namespace Cardinal_System_Common.MessageNetworking
 
         private void ConnectToHeathCliffRequest(ConnectToHeathCliffRequest connectToHeathCliffRequest)
         {
-            var componentConnection = new ComponentConnection(connectToHeathCliffRequest.Address, connectToHeathCliffRequest.Port);
+            var componentConnection = new ComponentConnection(connectToHeathCliffRequest.Address,
+                connectToHeathCliffRequest.Port);
             try
             {
                 componentConnection.Start();
                 ComponentConnections.TryAdd(-1, componentConnection);
                 MessageHubV2.Send(new ConnectToHeathCliffResponse(true));
-                componentConnection.SendMessage(new HeathCliffNewIdRequest(ComponentSettings.ComponentType, _address, _port));
+                componentConnection.SendMessage(new HeathCliffNewIdRequest(ComponentSettings.ComponentType, _address,
+                    _port));
             }
             catch (Exception)
             {
@@ -164,24 +183,34 @@ namespace Cardinal_System_Common.MessageNetworking
                 componentConnection.Stop();
             }
 
-            if (!ComponentConnections.ContainsKey(disconnectFromHeathCliff.ComponentId))
+            ConnectToNewComponent(disconnectFromHeathCliff.ComponentId, disconnectFromHeathCliff.IpAddress,
+                disconnectFromHeathCliff.Port);
+        }
+
+        protected virtual void ConnectToNewComponent(long componentId, string ipAddress, int port)
+        {
+            ComponentConnection componentConnection;
+            if (!ComponentConnections.ContainsKey(componentId))
             {
-                componentConnection = new ComponentConnection(disconnectFromHeathCliff.IpAddress, disconnectFromHeathCliff.Port);
+                componentConnection = new ComponentConnection(ipAddress, port);
                 try
                 {
-                    Console.WriteLine("DisconnectFromHeathCliff, Connecting to {0} - {1}", disconnectFromHeathCliff.IpAddress, disconnectFromHeathCliff.Port);
+                    Console.WriteLine("DisconnectFromHeathCliff, Connecting to {0} - {1}", ipAddress, port);
                     componentConnection.Start();
                     Console.WriteLine("DisconnectFromHeathCliff, Connected!");
-                    ComponentConnections.TryAdd(disconnectFromHeathCliff.ComponentId, componentConnection);
-                    ComponentSettings.DefaultCircuit = disconnectFromHeathCliff.ComponentId;
+                    ComponentConnections.TryAdd(componentId, componentConnection);
+                    if (ComponentSettings.ComponentType == ComponentType.Server)
+                        // TODO: Set this for other component types?
+                        ComponentSettings.DefaultCircuit = componentId;
                     _heartbeater.ReassignComponentConnection(componentConnection);
-                    var messageToGoOut = new ComponentInformationBroadcast(ComponentSettings.ComponentId, ComponentSettings.ComponentType);
+                    var messageToGoOut = new ComponentInformationBroadcast(ComponentSettings.ComponentId,
+                        ComponentSettings.ComponentType);
                     componentConnection.SendMessage(messageToGoOut);
                     //TODO: What do after connecting to another circuit? [1/3]
                 }
                 catch (Exception)
                 {
-                    throw new Exception(string.Format("Couldn't connect to {0}:{1}", disconnectFromHeathCliff.IpAddress, disconnectFromHeathCliff.Port));
+                    throw new Exception(string.Format("Couldn't connect to {0}:{1}", ipAddress, port));
                     //TODO: If can't connect, do something nicer [1/3]
                 }
             }
@@ -203,7 +232,8 @@ namespace Cardinal_System_Common.MessageNetworking
                 }
                 else
                 {
-                    Console.WriteLine("No ComponentConnection by the DefaultCircuit:{0}", ComponentSettings.DefaultCircuit);
+                    Console.WriteLine("No ComponentConnection by the DefaultCircuit:{0}",
+                        ComponentSettings.DefaultCircuit);
                 }
             }
             else

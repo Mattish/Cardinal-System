@@ -20,7 +20,8 @@ namespace Cardinal_System_Common
         private readonly Task _senderTask;
         private readonly ManualResetEventSlim _manualResetEventSlim;
 
-        public MessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction, ManualResetEventSlim manualResetEventSlim)
+        public MessageSender(TcpClient client, ConcurrentQueue<MessageDto> senderQueue, Action disconnectAction,
+            ManualResetEventSlim manualResetEventSlim)
         {
             _client = client;
             _senderQueue = senderQueue;
@@ -55,7 +56,6 @@ namespace Cardinal_System_Common
 
                     while (!_senderQueue.IsEmpty && batchedCount < 16)
                     {
-
                         MessageDto messageDto;
                         bool couldDequeue = _senderQueue.TryDequeue(out messageDto);
 

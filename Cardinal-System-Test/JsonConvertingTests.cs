@@ -88,10 +88,11 @@ namespace Cardinal_System_Test
             var newIdRequestDto = original.ToDto();
             var dtoAsString = JsonConvert.SerializeObject(newIdRequestDto);
             MessageDto deserializeMessageDto = null;
-            Assert.DoesNotThrow(() =>
-            {
-                deserializeMessageDto = JsonConvert.DeserializeObject<MessageDto>(dtoAsString, _messageDtoConverter);
-            });
+            Assert.DoesNotThrow(
+                () =>
+                {
+                    deserializeMessageDto = JsonConvert.DeserializeObject<MessageDto>(dtoAsString, _messageDtoConverter);
+                });
 
             Assert.That(deserializeMessageDto, Is.Not.Null);
             Assert.That(deserializeMessageDto.GetType(), Is.EqualTo(newIdRequestDto.GetType()));

@@ -17,7 +17,9 @@ namespace Cardinal_System_HeathCliff
         private readonly TimeSpan _deadComponentGetsRemoved = TimeSpan.FromSeconds(4000); //TODO: Lower value irl
         private readonly TimeSpan _checkerLoopTime = TimeSpan.FromSeconds(2);
 
-        readonly ConcurrentDictionary<long, NetworkComponent> _components = new ConcurrentDictionary<long, NetworkComponent>();
+        private readonly ConcurrentDictionary<long, NetworkComponent> _components =
+            new ConcurrentDictionary<long, NetworkComponent>();
+
         private Task _heartbeatCheckerTask;
         private bool _heathbeatCheckerRunning;
 
@@ -30,7 +32,9 @@ namespace Cardinal_System_HeathCliff
 
         private void ComponentHasDiconnected(ComponentConnectionDisconnect componentConnectionDisconnect)
         {
-            var component = _components.FirstOrDefault(pair => pair.Value.ComponentConnection == componentConnectionDisconnect.ComponentConnection);
+            var component =
+                _components.FirstOrDefault(
+                    pair => pair.Value.ComponentConnection == componentConnectionDisconnect.ComponentConnection);
             if (component.Value != null)
             {
                 NetworkComponent networkComponent;
@@ -39,10 +43,12 @@ namespace Cardinal_System_HeathCliff
             }
         }
 
-        public long AddAndConnectTo(long componentId, ComponentType componentType, ComponentConnection componentConnection)
+        public long AddAndConnectTo(long componentId, ComponentType componentType,
+            ComponentConnection componentConnection)
         {
             long returnConnectId = _components.Count == 0 ? -1 : _components.First().Value.ComponentId;
-            var result = _components.TryAdd(componentId, new NetworkComponent(componentId, componentType, componentConnection));
+            var result = _components.TryAdd(componentId,
+                new NetworkComponent(componentId, componentType, componentConnection));
             if (!result)
                 throw new Exception("Exception when trying to add new NetworkComponent to Manager");
             Console.WriteLine("Added NetworkComponent {0} - {1}", componentId, componentType);
@@ -77,10 +83,13 @@ namespace Cardinal_System_HeathCliff
                 componentsToRemove.Clear();
                 foreach (var heathCliffComponent in _components)
                 {
-                    var isAlive = (heathCliffComponent.Value.LastHeartbeatReceived + _heartbeatKeepsComponentAlive) > DateTime.UtcNow;
+                    var isAlive = (heathCliffComponent.Value.LastHeartbeatReceived + _heartbeatKeepsComponentAlive) >
+                                  DateTime.UtcNow;
                     if (!isAlive)
                     {
-                        var isDeadForLong = (heathCliffComponent.Value.LastHeartbeatReceived + _heartbeatKeepsComponentAlive + _deadComponentGetsRemoved) < DateTime.UtcNow;
+                        var isDeadForLong = (heathCliffComponent.Value.LastHeartbeatReceived +
+                                             _heartbeatKeepsComponentAlive + _deadComponentGetsRemoved) <
+                                            DateTime.UtcNow;
                         if (isDeadForLong)
                         {
                             componentsToRemove.Add(heathCliffComponent.Key);

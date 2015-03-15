@@ -20,7 +20,8 @@ namespace Cardinal_System_Common
         private Task _listener;
         private int _receiveTotal;
 
-        public MessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction, ManualResetEventSlim manualResetEventSlimReceiving)
+        public MessageListener(TcpClient client, ConcurrentQueue<MessageDto> received, Action disconnectAction,
+            ManualResetEventSlim manualResetEventSlimReceiving)
         {
             _received = received;
             _disconnectAction = disconnectAction;
@@ -37,7 +38,7 @@ namespace Cardinal_System_Common
                 var serializer = new JsonSerializer
                 {
                     CheckAdditionalContent = false,
-                    Converters = { new MessageDtoConverter() }
+                    Converters = {new MessageDtoConverter()}
                 };
                 try
                 {

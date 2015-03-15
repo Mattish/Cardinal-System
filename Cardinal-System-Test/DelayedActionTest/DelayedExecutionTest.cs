@@ -21,7 +21,8 @@ namespace Cardinal_System_Test.DelayedActionTest
             TimeToExecute:48.405 ExecutedAt:48.405 - box2P1Attack
             TimeToExecute:48.405 ExecutedAt:48.406 - box1P1Attack
         */
-        static public void Main()
+
+        public static void Main()
         {
             var delayedExecutionBox1 = new DelayedExecution(TimeSpan.FromMilliseconds(16));
             var delayedExecutionBox2 = new DelayedExecution(TimeSpan.FromMilliseconds(16));

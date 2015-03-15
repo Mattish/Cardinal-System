@@ -2,7 +2,7 @@
 {
     public class ComponentConnectionDisconnect
     {
-        public ComponentConnection ComponentConnection { get;private set; }
+        public ComponentConnection ComponentConnection { get; private set; }
 
         public ComponentConnectionDisconnect(ComponentConnection componentConnection)
         {

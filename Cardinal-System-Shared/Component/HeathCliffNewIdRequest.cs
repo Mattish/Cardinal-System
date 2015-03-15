@@ -8,6 +8,7 @@ namespace Cardinal_System_Shared.Component
         public ComponentType ComponentType { get; private set; }
         public string IpAddress { get; private set; }
         public int Port { get; private set; }
+
         public HeathCliffNewIdRequest(ComponentType componentType, string ipAddress, int port)
             : base(MessageType.HeathCliffNewIdRequest)
         {

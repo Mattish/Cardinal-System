@@ -32,9 +32,13 @@ namespace Cardinal_System_Common.MessageNetworking
             }
         }
 
-        protected virtual void ExtraMessageRegisters() { }
+        protected virtual void ExtraMessageRegisters()
+        {
+        }
 
-        protected virtual void SpecificActionAfterEnqueue(TRequest request) { }
+        protected virtual void SpecificActionAfterEnqueue(TRequest request)
+        {
+        }
 
         private void AddToQueue(TRequest pageInfoRequest)
         {

@@ -98,8 +98,9 @@ namespace Cardinal_System_Common
 
             if (_client.Connected)
             {
-                _messageSender = new MessageSender(_client, SenderQueue, HasDisconnected, _manualResetEventSlimSender);
-                _messageListener = new MessageListener(_client, ReceiverQueue, HasDisconnected, _manualResetEventSlimReceiving);
+                _messageSender = new MessageSender(_client, SenderQueue, Disconnected, _manualResetEventSlimSender);
+                _messageListener = new MessageListener(_client, ReceiverQueue, Disconnected,
+                    _manualResetEventSlimReceiving);
                 _messageListener.Start();
                 _messageSender.Start();
             }
@@ -114,7 +115,7 @@ namespace Cardinal_System_Common
             }
         }
 
-        private void HasDisconnected()
+        private void Disconnected()
         {
             lock (_hasDiconnectedLock)
             {

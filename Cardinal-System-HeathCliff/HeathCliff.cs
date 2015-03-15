@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -16,8 +17,13 @@ namespace Cardinal_System_HeathCliff
     {
         private readonly string _ipAddress;
         private readonly int _port;
-        private readonly ConcurrentDictionary<long, ComponentConnection> _componentConnections = new ConcurrentDictionary<long, ComponentConnection>();
-        private readonly List<ComponentConnection> _unnumberedComponentConnections = new List<ComponentConnection>(); // TODO: Use a thread-safe collection? [1/3]
+
+        private readonly ConcurrentDictionary<long, ComponentConnection> _componentConnections =
+            new ConcurrentDictionary<long, ComponentConnection>();
+
+        private readonly List<ComponentConnection> _unnumberedComponentConnections = new List<ComponentConnection>();
+            // TODO: Use a thread-safe collection? [1/3]
+
         private TcpListener _tcpListener;
         private Task _listenerTask;
         private bool _doProcessing;
@@ -35,7 +41,9 @@ namespace Cardinal_System_HeathCliff
                     return;
                 }
             }
-            var connectionkey = _componentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.ComponentConnection).Key;
+            var connectionkey =
+                _componentConnections.FirstOrDefault(x => x.Value == disconnectedComponentConnection.ComponentConnection)
+                    .Key;
             ComponentConnection connection;
             _componentConnections.TryRemove(connectionkey, out connection);
         }
@@ -53,7 +61,8 @@ namespace Cardinal_System_HeathCliff
             {
                 var client = _tcpListener.AcceptTcpClient();
                 Console.WriteLine("Got connection!");
-                var componentConnection = new ComponentConnection(client); //TODO: When we receive a connection, will it always be unnumbered? [1/3]
+                var componentConnection = new ComponentConnection(client);
+                    //TODO: When we receive a connection, will it always be unnumbered? [1/3]
                 lock (_unnumberedComponentConnections)
                 {
                     _unnumberedComponentConnections.Add(componentConnection);
@@ -81,7 +90,8 @@ namespace Cardinal_System_HeathCliff
 
         private void HandleWrappedMessage(WrappedMessage wrappedMessage)
         {
-            Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, wrappedMessage.Message, wrappedMessage.Message.SourceComponent);
+            Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, wrappedMessage.Message,
+                wrappedMessage.Message.SourceComponent);
             if (wrappedMessage.Message.Type == MessageType.HeathCliffNewIdRequest)
             {
                 lock (_unnumberedComponentConnections)
@@ -90,8 +100,9 @@ namespace Cardinal_System_HeathCliff
                     wrappedMessage.ComponentConnection.SendMessage(new HeathCliffNewIdResponse(componentId));
                     _unnumberedComponentConnections.Remove(wrappedMessage.ComponentConnection);
                     _componentConnections.TryAdd(componentId, wrappedMessage.ComponentConnection);
-                    var hcIdRequestMessage = (HeathCliffNewIdRequest)wrappedMessage.Message;
-                    var connectToResponse = _manager.AddAndConnectTo(componentId, hcIdRequestMessage.ComponentType, wrappedMessage.ComponentConnection);
+                    var hcIdRequestMessage = (HeathCliffNewIdRequest) wrappedMessage.Message;
+                    var connectToResponse = _manager.AddAndConnectTo(componentId, hcIdRequestMessage.ComponentType,
+                        wrappedMessage.ComponentConnection);
                     var connectToIp = _ipAddress;
                     var connectToPort = _port;
                     var connectToType = ComponentType.HeathCliff;
@@ -103,16 +114,25 @@ namespace Cardinal_System_HeathCliff
                         connectToType = hcIdRequestMessage.ComponentType;
                     }
 
-                    var hcOrderConnect = new HeathCliffOrderConnect(connectToIp, connectToPort, connectToResponse, connectToType);
-                    wrappedMessage.ComponentConnection.SendMessage(hcOrderConnect); // TODO: Send over MessageHub rather then directly? [1/3]
+                    var hcOrderConnect = new HeathCliffOrderConnect(connectToIp, connectToPort, connectToResponse,
+                        connectToType);
+                    wrappedMessage.ComponentConnection.SendMessage(hcOrderConnect);
+                        // TODO: Send over MessageHub rather then directly? [1/3]
                 }
             }
         }
 
         private int _messageCounter;
+        private DateTime _lastMessage;
+
         protected override void SpecificAction(Message message)
         {
-            Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter++, message, message.SourceComponent);
+            _messageCounter++;
+            if (_lastMessage.AddSeconds(1) < DateTime.UtcNow)
+            {
+                Console.WriteLine("{0} - {1} SourceComponentId:{2}", _messageCounter, message, message.SourceComponent);
+                _lastMessage = DateTime.UtcNow;
+            }
         }
     }
 }

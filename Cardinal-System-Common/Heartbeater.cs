@@ -49,7 +49,7 @@ namespace Cardinal_System_Common
                     heartbeat.TargetComponent = -1;
                     _componentConnection.SendMessage(heartbeat);
                 }
-                //Thread.Sleep(1000 * _secondsPerHeartbeat); // TODO: Make nicer
+                Thread.Sleep(1000*_secondsPerHeartbeat); // TODO: Make nicer
             }
         }
     }
